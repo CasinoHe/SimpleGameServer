@@ -33,3 +33,7 @@
 
 # Thirdparty directories
 ThirdpartyPackages
+
+# Build directories
+build
+Build

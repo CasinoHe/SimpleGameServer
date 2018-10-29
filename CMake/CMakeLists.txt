@@ -5,6 +5,7 @@ project(SimpleGameServer)
 
 # root directory
 set(SOURCE_ROOT_DIR ${CMAKE_SOURCE_DIR}/..)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 
 # export compile flags
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
