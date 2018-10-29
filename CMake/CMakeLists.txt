@@ -18,6 +18,7 @@ if (NOT EXISTS ${PACKAGE_DIR})
 endif (NOT EXISTS ${PACKAGE_DIR})
 
 # download all thirdparty files
+set(BOOST_ROOT_DIR "")
 include(ThirdParty)
 
 set(SRC_FILES
