@@ -17,10 +17,19 @@ if (NOT EXISTS ${PACKAGE_DIR})
 	file(MAKE_DIRECTORY ${PACKAGE_DIR})
 endif (NOT EXISTS ${PACKAGE_DIR})
 
+# download all thirdparty files
 include(ThirdParty)
 
 set(SRC_FILES
 	${SOURCE_ROOT_DIR}/main.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES}
+	$<TARGET_OBJECTS:boost_system>
+	$<TARGET_OBJECTS:boost_filesystem>
+	$<TARGET_OBJECTS:boost_thread>
+	$<TARGET_OBJECTS:boost_date_time>
+)
+target_link_libraries(${PROJECT_NAME}
+	pthread
+)
