@@ -18,13 +18,13 @@ if (NOT EXISTS ${PACKAGE_DIR})
 endif (NOT EXISTS ${PACKAGE_DIR})
 
 # download all thirdparty files
-set(BOOST_ROOT_DIR "")
 include(ThirdParty)
 
 set(SRC_FILES
 	${SOURCE_ROOT_DIR}/main.cpp
 )
 
+set(CMAKE_CXX_STANDARD 11)
 add_executable(${PROJECT_NAME} ${SRC_FILES}
 	$<TARGET_OBJECTS:boost_system>
 	$<TARGET_OBJECTS:boost_filesystem>

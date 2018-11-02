@@ -37,3 +37,6 @@ ThirdpartyPackages
 # Build directories
 build
 Build
+
+# compile commands
+compile_commands.json
