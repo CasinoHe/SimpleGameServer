@@ -21,6 +21,8 @@ set(NEED_BOOST_LIBS
 	system
 	filesystem
 	date_time
+	atomic
+	chrono
 )
 include_directories(${BOOST_ROOT_DIR})
 foreach (lib ${NEED_BOOST_LIBS})

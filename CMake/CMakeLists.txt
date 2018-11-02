@@ -26,10 +26,12 @@ set(SRC_FILES
 
 set(CMAKE_CXX_STANDARD 11)
 add_executable(${PROJECT_NAME} ${SRC_FILES}
-	$<TARGET_OBJECTS:boost_system>
-	$<TARGET_OBJECTS:boost_filesystem>
 	$<TARGET_OBJECTS:boost_thread>
 	$<TARGET_OBJECTS:boost_date_time>
+	$<TARGET_OBJECTS:boost_atomic>
+	$<TARGET_OBJECTS:boost_chrono>
+	$<TARGET_OBJECTS:boost_system>
+	$<TARGET_OBJECTS:boost_filesystem>
 )
 target_link_libraries(${PROJECT_NAME}
 	pthread
