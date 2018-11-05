@@ -2,12 +2,12 @@
 // Created: 2018.11.1
 // By: CasinoHe
 
+#include "log/log.h"
+
 #include <iostream>
-#include <boost/chrono.hpp>
-#include <boost/thread.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 int main(int argc, char **argv) {
-	std::cout << "Simple server stoped" << std::endl;
+	simple_server::g_logger.info("Simple server engine starting.......");
+	simple_server::g_logger << "adfasdfasdf";
 	return 0;
 }

@@ -37,3 +37,8 @@ add_executable(${PROJECT_NAME} ${SRC_FILES}
 target_link_libraries(${PROJECT_NAME}
 	pthread
 )
+
+# log
+target_sources(${PROJECT_NAME} PRIVATE
+	${SOURCE_ROOT_DIR}/log/log.cpp
+)
