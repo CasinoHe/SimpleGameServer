@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES}
 	$<TARGET_OBJECTS:boost_chrono>
 	$<TARGET_OBJECTS:boost_system>
 	$<TARGET_OBJECTS:boost_filesystem>
+	$<TARGET_OBJECTS:boost_log>
 )
 target_link_libraries(${PROJECT_NAME}
 	pthread

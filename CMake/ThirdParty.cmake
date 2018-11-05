@@ -23,6 +23,7 @@ set(NEED_BOOST_LIBS
 	date_time
 	atomic
 	chrono
+	log
 )
 include_directories(${BOOST_ROOT_DIR})
 foreach (lib ${NEED_BOOST_LIBS})
