@@ -20,6 +20,7 @@ namespace simple_server {
 			CLogManager(const std::string filename);
 			CLogManager(const char *filename);
 			inline LOGGER_TYPE get_logger() {return m_logger;}
+			inline boost::log::trivial::severity_level get_level() {return m_level;}
 
 			void trace(const char *msg);
 			void info(const char *msg);
@@ -35,6 +36,7 @@ namespace simple_server {
 
 			std::string m_filename;
 			LOGGER_TYPE m_logger;
+			boost::log::trivial::severity_level m_level;
 	};
 
 	extern CLogManager g_logger;

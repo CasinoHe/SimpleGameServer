@@ -40,6 +40,8 @@ namespace simple_server {
 	void CLogManager::initialize() {
 		boost::log::add_common_attributes();
 
+		m_level = boost::log::trivial::info;
+
 		// check filename
 		if (m_filename.size() <= 0) {
 			throw std::invalid_argument("cannot initialize log without filename");
@@ -101,7 +103,9 @@ namespace simple_server {
 	}
 
 	CLogManager &operator<<(CLogManager &logger, const char *msg) {
-		std::cout << msg << std::endl;
+		if (logger.get_level() == boost::log::trivial::severity_level::info ) {
+			logger.info(msg);
+		}
 		return logger;
 	}
 }
