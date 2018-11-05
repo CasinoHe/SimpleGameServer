@@ -78,27 +78,27 @@ namespace simple_server {
 				% expression::message);
 	}
 
-	void CLogManager::trace(const char *msg) {
+	inline void CLogManager::trace(const char *msg) {
 		BOOST_LOG_SEV(m_logger, boost::log::trivial::trace) << msg;
 	}
 
-	void CLogManager::info(const char *msg) {
+	inline void CLogManager::info(const char *msg) {
 		BOOST_LOG_SEV(m_logger, boost::log::trivial::info) << msg;
 	}
 
-	void CLogManager::debug(const char *msg) {
+	inline void CLogManager::debug(const char *msg) {
 		BOOST_LOG_SEV(m_logger, boost::log::trivial::debug) << msg;
 	}
 
-	void CLogManager::warning(const char *msg) {
+	inline void CLogManager::warning(const char *msg) {
 		BOOST_LOG_SEV(m_logger, boost::log::trivial::warning) << msg;
 	}
 
-	void CLogManager::error(const char *msg) {
+	inline void CLogManager::error(const char *msg) {
 		BOOST_LOG_SEV(m_logger, boost::log::trivial::error) << msg;
 	}
 
-	void CLogManager::fatal(const char *msg) {
+	inline void CLogManager::fatal(const char *msg) {
 		BOOST_LOG_SEV(m_logger, boost::log::trivial::fatal) << msg;
 	}
 
