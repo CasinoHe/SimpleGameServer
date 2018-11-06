@@ -11,6 +11,13 @@
 
 #include <boost/log/trivial.hpp>
 
+#define LOG_TRACE (boost::log::trivial::trace)
+#define LOG_DEBUG (boost::log::trivial::debug)
+#define LOG_INFO (boost::log::trivial::info)
+#define LOG_WARNING (boost::log::trivial::warning)
+#define LOG_ERROR (boost::log::trivial::error)
+#define LOG_FATAL (boost::log::trivial::fatal)
+
 namespace simple_server {
 	class CLogManager {
 		public:
@@ -21,6 +28,7 @@ namespace simple_server {
 			CLogManager(const char *filename);
 			inline LOGGER_TYPE get_logger() {return m_logger;}
 			inline boost::log::trivial::severity_level get_level() {return m_level;}
+			inline void set_level(const boost::log::trivial::severity_level level) {m_level = level;}
 
 			void trace(const char *msg);
 			void info(const char *msg);
@@ -30,6 +38,8 @@ namespace simple_server {
 			void fatal(const char *msg);
 
 			friend CLogManager &operator<<(CLogManager &logger, const char *msg);
+			friend CLogManager &operator<<(CLogManager &logger, const boost::log::trivial::severity_level &level);
+			CLogManager &operator()(const boost::log::trivial::severity_level &level);
 
 		private:
 			void initialize();

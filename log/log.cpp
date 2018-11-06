@@ -103,9 +103,42 @@ namespace simple_server {
 	}
 
 	CLogManager &operator<<(CLogManager &logger, const char *msg) {
-		if (logger.get_level() == boost::log::trivial::severity_level::info ) {
+		boost::log::trivial::severity_level level = logger.get_level();
+		if (level == LOG_INFO) {
 			logger.info(msg);
+		} else {
+			switch (level) {
+				case LOG_TRACE:
+					logger.trace(msg);
+					break;
+				case LOG_DEBUG:
+					logger.debug(msg);
+					break;
+				case LOG_WARNING:
+					logger.debug(msg);
+					break;
+				case LOG_ERROR:
+					logger.error(msg);
+					break;
+				case LOG_FATAL:
+					logger.fatal(msg);
+					break;
+				default:
+					logger.error("Cannot find level:");
+					logger.error(msg);
+					break;
+			}
 		}
 		return logger;
+	}
+
+	CLogManager &operator<<(CLogManager &logger, const boost::log::trivial::severity_level &level) {
+		logger.set_level(level);
+		return logger;
+	}
+
+	 CLogManager &CLogManager::operator()(const boost::log::trivial::severity_level &level) {
+		set_level(level);
+		return *this;
 	}
 }
