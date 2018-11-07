@@ -20,6 +20,8 @@ endif (NOT EXISTS ${PACKAGE_DIR})
 # download all thirdparty files
 include(ThirdParty)
 
+include_directories(${SOURCE_ROOT_DIR})
+
 set(SRC_FILES
 	${SOURCE_ROOT_DIR}/main.cpp
 )
@@ -33,6 +35,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES}
 	$<TARGET_OBJECTS:boost_system>
 	$<TARGET_OBJECTS:boost_filesystem>
 	$<TARGET_OBJECTS:boost_log>
+	$<TARGET_OBJECTS:boost_program_options>
 )
 target_link_libraries(${PROJECT_NAME}
 	pthread
@@ -41,4 +44,15 @@ target_link_libraries(${PROJECT_NAME}
 # log
 target_sources(${PROJECT_NAME} PRIVATE
 	${SOURCE_ROOT_DIR}/log/log.cpp
+)
+
+# options and config
+target_sources(${PROJECT_NAME} PRIVATE
+	${SOURCE_ROOT_DIR}/config/config.cpp
+	${SOURCE_ROOT_DIR}/config/options.cpp
+)
+
+# test
+target_sources(${PROJECT_NAME} PRIVATE
+	${SOURCE_ROOT_DIR}/test/test.cpp
 )

@@ -45,11 +45,11 @@ namespace simple_server {
 	extern CLogManager g_logger;
 }
 
-#define LOG_TRACE(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::trace) << "[" << BOOST_CURRENT_FUNCTION << "] "
-#define LOG_DEBUG(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::debug) << "[" << BOOST_CURRENT_FUNCTION << "] "
-#define LOG_INFO(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::info) << "[" << BOOST_CURRENT_FUNCTION << "] "
-#define LOG_WARNING(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::warning) << "[" << BOOST_CURRENT_FUNCTION << "] "
-#define LOG_ERROR(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::error) << "[" << BOOST_CURRENT_FUNCTION << "] "
-#define LOG_FATAL(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::fatal) << "[" << BOOST_CURRENT_FUNCTION << "] "
+#define LOG_TRACE(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::trace) << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] "
+#define LOG_DEBUG(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::debug) << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] "
+#define LOG_INFO(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::info) << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] "
+#define LOG_WARNING(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::warning) << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] "
+#define LOG_ERROR(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::error) << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] "
+#define LOG_FATAL(logger) BOOST_LOG_SEV(logger.get_logger(), boost::log::trivial::fatal) << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] "
 
 #endif

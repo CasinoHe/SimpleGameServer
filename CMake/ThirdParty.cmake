@@ -24,6 +24,7 @@ set(NEED_BOOST_LIBS
 	atomic
 	chrono
 	log
+	program_options
 )
 include_directories(${BOOST_ROOT_DIR})
 foreach (lib ${NEED_BOOST_LIBS})
