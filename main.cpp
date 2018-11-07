@@ -9,22 +9,15 @@
 void test() {
 	using namespace simple_server;
 
-	g_logger(LOG_INFO) << "Hello, world!";
-	g_logger(LOG_ERROR) << "Hello, error!";
-	g_logger(LOG_TRACE) << "Hello, trace!";
-	g_logger(LOG_FATAL) << "Hello, fatal!";
+	LOG_TRACE(g_logger) << "Hello, World!" << "This is a trace!";
 
-	g_logger << LOG_FATAL << "hello, fatal" << LOG_ERROR 
-		<< "hello, error" << LOG_INFO << "hello, info";
+	LOG_ERROR(g_logger) << "hello, error";
 }
 
 int main(int argc, char **argv) {
 	using namespace simple_server;
-
-	g_logger.info("Simple server engine starting.......");
-
+	LOG_INFO(g_logger) << "Simple server staring....";
 	test();
-
-	g_logger.info("Simple server exit normally.");
+	LOG_INFO(g_logger) << "Simple server exit normally";
 	return 0;
 }

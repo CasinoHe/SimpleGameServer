@@ -10,45 +10,43 @@
 #include <boost/log/expressions.hpp>
 #include <boost/log/utility/setup.hpp>
 #include <boost/log/support/date_time.hpp>
+#include <boost/log/attributes.hpp>
+#include <boost/log/core.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace simple_server {
+	bool CLogManager::has_init = false;
 	CLogManager g_logger = CLogManager("global");
 
 	CLogManager::CLogManager(const std::string filename):
 		m_filename(filename) {
-			try {
-				initialize();
-			} catch (const std::invalid_argument &e) {
-				std::cerr << e.what() << std::endl;
-			} catch (const std::exception &e) {
-				std::cerr << e.what() << std::endl;
-			}
+			CLogManager(filename.c_str());
 		}
 
 	CLogManager::CLogManager(const char *filename):
 		m_filename(filename) {
-			try {
-				initialize();
-			} catch (const std::invalid_argument &e) {
-				std::cerr << e.what() << std::endl;
-			} catch (const std::exception &e) {
-				std::cerr << e.what() << std::endl;
+			m_level = boost::log::trivial::info;
+
+			// static initialize
+			initialize_log_sinks();
+
+			// log sources
+			if (m_filename.size() <= 0) {
+				throw std::invalid_argument("cannot initialize log without filename");
 			}
+
+			m_logger.add_attribute("FileTag", boost::log::attributes::constant<std::string>(m_filename));
 		}
 
-	void CLogManager::initialize() {
+	void CLogManager::initialize_log_sinks() {
+		if (has_init) {
+			return;
+		}
+
+		has_init = true;
+
+		boost::shared_ptr<boost::log::core> core = boost::log::core::get();
 		boost::log::add_common_attributes();
-
-		m_level = boost::log::trivial::info;
-
-		// check filename
-		if (m_filename.size() <= 0) {
-			throw std::invalid_argument("cannot initialize log without filename");
-		}
-
-		// file tag
-		m_logger.add_attribute("FileTag", boost::log::attributes::constant<std::string>(m_filename));
 
 		// multi-files sinks
 		boost::shared_ptr<boost::log::sinks::text_multifile_backend> backend = 
@@ -62,73 +60,25 @@ namespace simple_server {
 
 		// sinks
 		typedef boost::log::sinks::synchronous_sink<boost::log::sinks::text_multifile_backend> SINK_TYPE;
-		boost::shared_ptr<SINK_TYPE> sink = boost::make_shared<SINK_TYPE>();
+		boost::shared_ptr<SINK_TYPE> sink = boost::make_shared<SINK_TYPE>(backend);
 
 		// log format
 		namespace expression = boost::log::expressions;
 		namespace attr = boost::log::attributes;
 		sink->set_formatter(
-				// log format [TimeStamp] [ProcessID] [ThreadID] [Severity] [LineID] message
-				expression::format("[%1%] [%2%] [%3%] [%4%] [%5%] %6%")
+				// log format [TimeStamp] [ProcessID] [ThreadID] [Severity] message
+				expression::format("[%1%] [%2%] [%3%] [%4%] %5%")
 				% expression::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
 				% expression::attr<attr::current_process_id::value_type>("ProcessID")
 				% expression::attr<attr::current_thread_id::value_type>("ThreadID")
 				% expression::attr<boost::log::trivial::severity_level>("Severity")
-				% expression::attr<unsigned int>("LineID")
 				% expression::message);
-	}
-
-	inline void CLogManager::trace(const char *msg) {
-		BOOST_LOG_SEV(m_logger, boost::log::trivial::trace) << msg;
-	}
-
-	inline void CLogManager::info(const char *msg) {
-		BOOST_LOG_SEV(m_logger, boost::log::trivial::info) << msg;
-	}
-
-	inline void CLogManager::debug(const char *msg) {
-		BOOST_LOG_SEV(m_logger, boost::log::trivial::debug) << msg;
-	}
-
-	inline void CLogManager::warning(const char *msg) {
-		BOOST_LOG_SEV(m_logger, boost::log::trivial::warning) << msg;
-	}
-
-	inline void CLogManager::error(const char *msg) {
-		BOOST_LOG_SEV(m_logger, boost::log::trivial::error) << msg;
-	}
-
-	inline void CLogManager::fatal(const char *msg) {
-		BOOST_LOG_SEV(m_logger, boost::log::trivial::fatal) << msg;
+		core->add_sink(sink);
 	}
 
 	CLogManager &operator<<(CLogManager &logger, const char *msg) {
 		boost::log::trivial::severity_level level = logger.get_level();
-		if (level == LOG_INFO) {
-			logger.info(msg);
-		} else {
-			switch (level) {
-				case LOG_TRACE:
-					logger.trace(msg);
-					break;
-				case LOG_DEBUG:
-					logger.debug(msg);
-					break;
-				case LOG_WARNING:
-					logger.debug(msg);
-					break;
-				case LOG_ERROR:
-					logger.error(msg);
-					break;
-				case LOG_FATAL:
-					logger.fatal(msg);
-					break;
-				default:
-					logger.error("Cannot find level:");
-					logger.error(msg);
-					break;
-			}
-		}
+		BOOST_LOG_SEV(logger.get_logger(), level) << msg;
 		return logger;
 	}
 
