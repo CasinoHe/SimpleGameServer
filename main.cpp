@@ -9,8 +9,8 @@
 void test() {
 	using namespace simple_server;
 
-	LOG_TRACE(g_logger) << "Hello, World!" << "This is a trace!";
-
+	CLogManager test_logger("test");
+	LOG_TRACE(test_logger) << "Hello, World!" << "This is a trace!";
 	LOG_ERROR(g_logger) << "hello, error";
 }
 
