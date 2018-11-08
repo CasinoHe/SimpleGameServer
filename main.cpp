@@ -4,6 +4,7 @@
 
 #include "log/log.h"
 #include "config/options.h"
+#include "config/config.h"
 #include "test/test.h"
 
 #include <iostream>
@@ -38,6 +39,10 @@ int main(int argc, const char **argv) {
 
 	// get config file
 	std::string config_path(options.get_config_filepath());
+	CConfigManager config(config_path);
+	if (!config.parse_config()) {
+		return -1;
+	}
 
 	record_and_print("Simple server exit normally");
 	return 0;
