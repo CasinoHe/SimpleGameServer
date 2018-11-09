@@ -19,8 +19,10 @@ void record_and_print(const char *msg) {
 
 int main(int argc, const char **argv) {
 	record_and_print("Simple server staring....");
+	std::cout << std::endl;
 
 	// parse argument
+	record_and_print("Simple server is parsing argument...");
 	COptionsManager options;
 	if (!options.initialize_argument(argc, argv)) {
 		LOG_FATAL(g_logger) << "invalid argument";
@@ -29,20 +31,35 @@ int main(int argc, const char **argv) {
 		}
 		return -1;
 	}
+	record_and_print("Simple server finish argument parse.");
+	std::cout << std::endl;
+
+	// need help?
+	if (options.need_help()) {
+		options.help();
+		return 0;
+	}
 
 	// test?
 	if (options.is_test()) {
+		record_and_print("Simple server running in test mode");
+		std::cout << std::endl;
 		test_main(options);
+		std::cout << std::endl;
 		record_and_print("Simple server exit normally for test finished.");
 		return 0;
 	}
 
 	// get config file
+	record_and_print("Simple server is parsing config file");
 	std::string config_path(options.get_config_filepath());
 	CConfigManager config(config_path);
 	if (!config.parse_config()) {
+		record_and_print("Simple server exit because of config.More details in logs/config.log.");
 		return -1;
 	}
+	record_and_print("Simple server read config file succeed");
+	std::cout << std::endl;
 
 	record_and_print("Simple server exit normally");
 	return 0;

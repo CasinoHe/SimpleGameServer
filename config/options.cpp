@@ -16,8 +16,8 @@ namespace simple_server{
 
 			m_desc.add_options()
 				("help", "display help message")
-				("test", value<bool>()->default_value(false))
-				("config", value<std::string>()->default_value("config.json"));
+				("test", value<bool>()->default_value(false), "start unit test, false or true")
+				("config", value<std::string>()->default_value("config.json"), "server config file path");
 	}
 
 	bool COptionsManager::initialize_argument(int argc, const char **argv) {
@@ -45,11 +45,18 @@ namespace simple_server{
 		return filepath;
 	}
 
-	bool COptionsManager::is_test() {
+	bool COptionsManager::is_test() const {
 		if (m_values_map.count("test") <= 0) {
 			return false;
 		}
 
 		return m_values_map["test"].as<bool>();
+	}
+
+	bool COptionsManager::need_help() const {
+		if (m_values_map.count("help") <= 0) {
+			return false;
+		}
+		return true;
 	}
 }

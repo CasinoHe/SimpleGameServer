@@ -18,8 +18,8 @@ namespace simple_server {
 			COptionsManager(const COptionsManager &) = delete;
 			bool initialize_argument(int argc, const char **argv);
 			std::string get_config_filepath();
-			bool is_test();
-		private:
+			bool is_test() const;
+			bool need_help() const;
 			void help();
 		private:
 			boost::program_options::options_description m_desc;
