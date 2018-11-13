@@ -17,7 +17,8 @@ namespace simple_server{
 			m_desc.add_options()
 				("help", "display help message")
 				("test", value<bool>()->default_value(false), "start unit test, false or true")
-				("config", value<std::string>()->default_value("config.json"), "server config file path");
+				("config_file", value<std::string>()->default_value("config.json"), "server config file path")
+				("config_key", value<std::string>()->default_value("game"), "server config dict key in config file, default is \"game\"");
 	}
 
 	bool COptionsManager::initialize_argument(int argc, const char **argv) {
@@ -37,11 +38,11 @@ namespace simple_server{
 	}
 
 	std::string COptionsManager::get_config_filepath() {
-		if (m_values_map.count("config") <= 0) {
+		if (m_values_map.count("config_file") <= 0) {
 			return "";
 		}
 
-		std::string filepath(m_values_map["config"].as<std::string>());
+		std::string filepath(m_values_map["config_file"].as<std::string>());
 		return filepath;
 	}
 
@@ -58,5 +59,13 @@ namespace simple_server{
 			return false;
 		}
 		return true;
+	}
+
+	std::string COptionsManager::get_config_key() {
+		if (m_values_map.count("config_key") <= 0) {
+			return "";
+		} else {
+			return m_values_map["config_key"].as<std::string>();
+		}
 	}
 }

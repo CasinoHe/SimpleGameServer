@@ -2,11 +2,13 @@
 // Created: 2018.11.7
 // By: CasinoHe
 
+#include "log/log.h"
 #include "config/config.h"
 
 #include <stdexcept>
 
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/exceptions.hpp>
 
 namespace pt = boost::property_tree;
 

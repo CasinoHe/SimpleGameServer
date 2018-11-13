@@ -18,6 +18,7 @@ namespace simple_server {
 			COptionsManager(const COptionsManager &) = delete;
 			bool initialize_argument(int argc, const char **argv);
 			std::string get_config_filepath();
+			std::string get_config_key();
 			bool is_test() const;
 			bool need_help() const;
 			void help();
