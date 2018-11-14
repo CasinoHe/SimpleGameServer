@@ -56,3 +56,9 @@ target_sources(${PROJECT_NAME} PRIVATE
 target_sources(${PROJECT_NAME} PRIVATE
 	${SOURCE_ROOT_DIR}/test/test.cpp
 )
+
+# gate
+target_sources(${PROJECT_NAME} PRIVATE
+	${SOURCE_ROOT_DIR}/network/gate_base.cpp
+	${SOURCE_ROOT_DIR}/network/tcp_gate.cpp
+)

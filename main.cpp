@@ -6,10 +6,17 @@
 #include "config/options.h"
 #include "config/config.h"
 #include "test/test.h"
+#include "network/gate_base.h"
+#include "network/tcp_gate.h"
 
 #include <iostream>
+#include <list>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace simple_server;
+
 
 void record_and_print(const char *msg) {
 	LOG_INFO(g_logger) << msg;
@@ -17,26 +24,68 @@ void record_and_print(const char *msg) {
 }
 
 
-void configure_server(COptionsManager &options, CConfigManager & configs) {
+void record_and_print(const std::string &msg) {
+	LOG_INFO(g_logger) << msg;
+	std::cout << msg << std::endl;
+}
+
+
+void configure_one_gate(CConfigManager &configs, std::string &root_key, unsigned int index, std::list<boost::shared_ptr<CGateBase> > &gate_list) {
+	std::string server_key = root_key + ".server" + std::to_string(index);
+	std::string listen_ip_key = server_key + ".listen_ip";
+	std::string listen_port_key = server_key + ".listen_port";
+	std::string listen_proto_key = server_key + ".listen_proto";
+
+	if (!configs.find_value<std::string>(listen_ip_key)) {
+		record_and_print("Simple server cannot find server" + std::to_string(index) + "'s listen_ip");
+		return;
+	}
+
+	if (!configs.find_value<unsigned int>(listen_port_key)) {
+		record_and_print("Simple server cannot find server" + std::to_string(index) + "'s listen_port");
+		return;
+	}
+
+	if (!configs.find_value<std::string>(listen_proto_key)) {
+		record_and_print("Simple server cannot find server" + std::to_string(index) + "'s listen_proto");
+		return;
+	}
+
+	std::string listen_ip = configs.get_value<std::string>(listen_ip_key);
+	unsigned int listen_port = configs.get_value<unsigned int>(listen_port_key);
+	std::string listen_proto = configs.get_value<std::string>(listen_proto_key);
+
+	if (listen_proto != "tcp" && listen_proto != "udp") {
+		record_and_print("Simple server cannot open proto " + listen_proto + " for server" + std::to_string(index) + " now is " + listen_proto);
+		return;
+	}
+
+	if (listen_proto == "tcp") {
+		record_and_print("Simple server start " + listen_proto + " gate, ip: " + listen_ip + " port: " + std::to_string(listen_port));
+		boost::shared_ptr<CTcpGate> gate = boost::make_shared<CTcpGate>(listen_ip, listen_port);
+		gate_list.push_back(gate);
+	} else {
+	}
+}
+
+
+void configure_gates(COptionsManager &options, CConfigManager & configs, std::list<boost::shared_ptr<CGateBase> > &gate_list) {
 	// config key
 	std::string config_key = options.get_config_key();
 
-	// listen?
-	std::string listen_ip_key = config_key + ".listen_ip";
-	std::string listen_port_key = config_key + ".listen_port";
-	if (!configs.find_value<std::string>(listen_ip_key)) {
-		record_and_print("Simple server cannot find listen ip config");
+	// gate list
+	std::string gate_root_key = config_key + ".gate";
+	std::string gate_amount_key = gate_root_key + ".amount";
+
+	if (!configs.find_value<unsigned int>(gate_amount_key)) {
+		record_and_print("Simple server cannot find gate acmount");
 		return;
 	}
 
-	if (!configs.find_value<std::string>(listen_port_key)) {
-		record_and_print("Simple server cannot find listen port config");
-		return;
+	unsigned int max_gate_amount = configs.get_value<unsigned int>(gate_amount_key);
+	for (unsigned int index = 0; index < max_gate_amount; index++) {
+		configure_one_gate(configs, gate_root_key, index, gate_list);
 	}
-
-	std::string listen_ip, listen_port;
-	listen_ip = configs.get_value<std::string>(listen_ip_key);
-	listen_port = configs.get_value<std::string>(listen_port_key);
 }
 
 
@@ -73,7 +122,6 @@ int main(int argc, const char **argv) {
 		return 0;
 	}
 
-
 	// get config file
 	record_and_print("Simple server is parsing config file");
 	std::string config_path(options.get_config_filepath());
@@ -85,8 +133,10 @@ int main(int argc, const char **argv) {
 	record_and_print("Simple server read config file succeed");
 	std::cout << std::endl;
 
-	// configure server
-	configure_server(options, configs);
+	// configure gate
+	std::list<boost::shared_ptr<CGateBase> > gate_list;
+	gate_list.clear();
+	configure_gates(options, configs, gate_list);
 
 	record_and_print("Simple server exit normally");
 	return 0;

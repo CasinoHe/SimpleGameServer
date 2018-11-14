@@ -1,7 +1,17 @@
 {
 	"game": {
-		"listen_port": 10000,
-		"listen_ip": "0.0.0.0",
-		"listen_proto": "udp"
+		"gate": {
+			"amount": 2,
+			"server0": {
+				"listen_ip": "0.0.0.0",
+				"listen_port": 10000,
+				"listen_proto": "tcp"
+			},
+			"server1": {
+				"listen_ip": "0.0.0.0",
+				"listen_port": 10000,
+				"listen_proto": "udp"
+			}
+		}
 	}
 }
