@@ -4,8 +4,11 @@
 
 #include "network/gate_base.h"
 
+#include <boost/asio.hpp>
 
 namespace simple_server {
+	boost::asio::io_context io_context;
+
 	CGateBase::CGateBase(int proto):
 		m_proto(proto) {
 	}

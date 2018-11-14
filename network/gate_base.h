@@ -8,8 +8,11 @@
 #define SIMPLE_SERVER_NETWORK_GATE_BASE_H
 
 #include <string>
+#include <boost/asio.hpp>
 
 namespace simple_server{
+	extern boost::asio::io_context io_context;
+
 	class CGateBase {
 		public:
 			CGateBase(int proto);
@@ -17,15 +20,16 @@ namespace simple_server{
 
 			virtual void initialize(const std::string &ip, const unsigned short port);
 
-		private:
-			virtual void bind() = 0;
+		protected:
+			virtual bool bind() = 0;
 			virtual void listen() = 0;
 
-		private:
+		protected:
 			const int m_proto;  // tcp or udp
 			std::string m_ip;
 			unsigned short m_port;
 	};
+
 }
 
 #endif

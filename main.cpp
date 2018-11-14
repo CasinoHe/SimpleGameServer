@@ -88,6 +88,10 @@ void configure_gates(COptionsManager &options, CConfigManager & configs, std::li
 	}
 }
 
+void run() {
+	io_context.run();
+}
+
 
 int main(int argc, const char **argv) {
 	record_and_print("Simple server staring....");
@@ -137,6 +141,10 @@ int main(int argc, const char **argv) {
 	std::list<boost::shared_ptr<CGateBase> > gate_list;
 	gate_list.clear();
 	configure_gates(options, configs, gate_list);
+
+	// poll run
+	// TODO: thread
+	run();
 
 	record_and_print("Simple server exit normally");
 	return 0;
