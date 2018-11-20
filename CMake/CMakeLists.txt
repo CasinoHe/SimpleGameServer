@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES}
 	$<TARGET_OBJECTS:boost_filesystem>
 	$<TARGET_OBJECTS:boost_log>
 	$<TARGET_OBJECTS:boost_program_options>
+	$<TARGET_OBJECTS:boost_serialization>
 )
 target_link_libraries(${PROJECT_NAME}
 	pthread

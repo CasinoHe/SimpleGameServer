@@ -25,6 +25,7 @@ set(NEED_BOOST_LIBS
 	chrono
 	log
 	program_options
+	serialization
 )
 include_directories(${BOOST_ROOT_DIR})
 foreach (lib ${NEED_BOOST_LIBS})
