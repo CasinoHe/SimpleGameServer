@@ -67,5 +67,4 @@ target_sources(${PROJECT_NAME} PRIVATE
 # object base
 target_sources(${PROJECT_NAME} PRIVATE
 	${SOURCE_ROOT_DIR}/object/game_object.cpp
-	${SOURCE_ROOT_DIR}/object/game_object_component.cpp
 )

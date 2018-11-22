@@ -20,29 +20,59 @@
 #ifndef SIMPLE_SERVER_OBJECT_GAME_OBJECT_H
 #define SIMPLE_SERVER_OBJECT_GAME_OBJECT_H
 
+#include "object/game_object_component.h"
+
+#include <vector>
+#include <string>
+#include <unordered_map>
+
 #include <boost/dll.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/serialization/serialization.hpp>
+#include <boost/archive/polymorphic_binary_iarchive.hpp>
+#include <boost/archive/polymorphic_binary_oarchive.hpp>
 
 #define SIMPLE_SERVER_API extern "C" BOOST_SYMBOL_EXPORT
 
-#define OBJECT_HEAD private:\
-	friend boost::serialization::access;
+typedef boost::archive::polymorphic_binary_iarchive IArchive;
+typedef boost::archive::polymorphic_binary_oarchive OArchive;
+typedef boost::shared_ptr<IArchive> IArchivePtr;
+typedef boost::shared_ptr<OArchive> OArchivePtr;
+
+#define SERIALIZE_CLASS_HEAD private:\
+	friend boost::serialization::access;\
+	template<typename Archive>\
+	void serialize(Archive &ar, const unsigned int version);
+
+#define SPLIT_ SERIALIZE_CLASS_HEAD private:\
+	friend boost::serialization::access;\
+	template<typename Archive>\
+	void load(Archive &ar, const unsigned int version);\
+	template<typename Archive>\
+	void save(Archive &ar, const unsigned int version);\
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 
 namespace simple_server {
 	class CGameObject {
 
-		OBJECT_HEAD;
+		// class need to be serialized
+		SERIALIZE_CLASS_HEAD;
 
-		private:
-			unsigned int object_id;
+		protected:
+			unsigned int m_object_id;
+			std::unordered_map<std::string, boost::shared_ptr<CGameObjectComponent> > m_component_map;
 
 		private:
 			unsigned int generate_id();
 
 		public:
 			CGameObject() noexcept;
+			virtual ~CGameObject();
+
+			OArchivePtr get_serialization_data();
+			inline unsigned int get_object_id() noexcept {return m_object_id;}
 	};
 }
 
