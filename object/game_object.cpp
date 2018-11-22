@@ -12,9 +12,11 @@
 namespace simple_server {
 	namespace ar = boost::archive;
 
-	CGameObject::CGameObject() noexcept {
+	CGameObject::CGameObject(const std::string &name) noexcept:
+		logger(name + "_object") {
 		m_object_id = 0;
 		m_component_map.clear();
+		m_name = name;
 
 		generate_id();
 	}

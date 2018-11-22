@@ -20,6 +20,7 @@
 #ifndef SIMPLE_SERVER_OBJECT_GAME_OBJECT_H
 #define SIMPLE_SERVER_OBJECT_GAME_OBJECT_H
 
+#include "log/log.h"
 #include "object/game_object_component.h"
 
 #include <vector>
@@ -41,9 +42,9 @@ typedef boost::shared_ptr<IArchive> IArchivePtr;
 typedef boost::shared_ptr<OArchive> OArchivePtr;
 
 #define SERIALIZE_CLASS_HEAD private:\
-	friend boost::serialization::access;\
-	template<typename Archive>\
-	void serialize(Archive &ar, const unsigned int version);
+		friend boost::serialization::access;\
+		template<typename Archive>\
+		void serialize(Archive &ar, const unsigned int version);
 
 #define SPLIT_ SERIALIZE_CLASS_HEAD private:\
 	friend boost::serialization::access;\
@@ -67,15 +68,20 @@ namespace simple_server {
 			bool remove_component(const std::string &name);
 			boost::shared_ptr<CGameObjectComponent> get_component(const std::string &name);
 
+			std::string m_name;
+			CLogManager logger;
 		private:
 			unsigned int generate_id();
 
 		public:
-			CGameObject() noexcept;
+			CGameObject(const std::string &name) noexcept;
 			virtual ~CGameObject();
 
 			OArchivePtr get_serialization_data();
 			inline unsigned int get_object_id() noexcept {return m_object_id;}
+
+			// serialize
+			virtual bool is_serializable() = 0;
 	};
 }
 
