@@ -63,6 +63,9 @@ namespace simple_server {
 		protected:
 			unsigned int m_object_id;
 			std::unordered_map<std::string, boost::shared_ptr<CGameObjectComponent> > m_component_map;
+			bool add_component(const std::string &name, boost::shared_ptr<CGameObjectComponent> component);
+			bool remove_component(const std::string &name);
+			boost::shared_ptr<CGameObjectComponent> get_component(const std::string &name);
 
 		private:
 			unsigned int generate_id();

@@ -29,7 +29,7 @@ namespace simple_server {
 		OArchivePtr os = boost::make_shared<OArchive>(*ss);
 
 		(*os) << (*this);
-		return nullptr;
+		return os;
 	}
 
 	template<typename Archive>
@@ -40,5 +40,31 @@ namespace simple_server {
 	CGameObject::~CGameObject() {
 		// clear component map
 		m_component_map.clear();
+	}
+
+	bool CGameObject::add_component(const std::string &name, boost::shared_ptr<CGameObjectComponent> component) {
+		if (m_component_map.find(name) != m_component_map.end()) {
+			return false;
+		} else {
+			m_component_map[name] = component;
+			return true;
+		}
+	}
+
+	bool CGameObject::remove_component(const std::string &name) {
+		if (m_component_map.find(name) == m_component_map.end()) {
+			return false;
+		} else {
+			m_component_map.erase(name);
+		}
+		return true;
+	}
+
+	boost::shared_ptr<CGameObjectComponent> CGameObject::get_component(const std::string &name) {
+		if (m_component_map.find(name) == m_component_map.end()) {
+			return nullptr;
+		} else {
+			return m_component_map[name];
+		}
 	}
 }
