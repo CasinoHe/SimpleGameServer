@@ -30,14 +30,15 @@
 #include <boost/dll.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <boost/serialization/serialization.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 #define SIMPLE_SERVER_API extern "C" BOOST_SYMBOL_EXPORT
 
-typedef boost::archive::polymorphic_binary_iarchive IArchive;
-typedef boost::archive::polymorphic_binary_oarchive OArchive;
+typedef boost::archive::binary_iarchive IArchive;
+typedef boost::archive::binary_oarchive OArchive;
 typedef boost::shared_ptr<IArchive> IArchivePtr;
 typedef boost::shared_ptr<OArchive> OArchivePtr;
 
@@ -46,7 +47,7 @@ typedef boost::shared_ptr<OArchive> OArchivePtr;
 		template<typename Archive>\
 		void serialize(Archive &ar, const unsigned int version);
 
-#define SPLIT_ SERIALIZE_CLASS_HEAD private:\
+#define SPLIT_SERIALIZE_CLASS_HEAD private:\
 	friend boost::serialization::access;\
 	template<typename Archive>\
 	void load(Archive &ar, const unsigned int version);\
@@ -62,7 +63,7 @@ namespace simple_server {
 		SERIALIZE_CLASS_HEAD;
 
 		protected:
-			unsigned int m_object_id;
+			boost::uuids::uuid m_object_id;
 			std::unordered_map<std::string, boost::shared_ptr<CGameObjectComponent> > m_component_map;
 			bool add_component(const std::string &name, boost::shared_ptr<CGameObjectComponent> component);
 			bool remove_component(const std::string &name);
@@ -70,15 +71,13 @@ namespace simple_server {
 
 			std::string m_name;
 			CLogManager logger;
-		private:
-			unsigned int generate_id();
 
 		public:
 			CGameObject(const std::string &name) noexcept;
 			virtual ~CGameObject();
 
 			OArchivePtr get_serialization_data();
-			inline unsigned int get_object_id() noexcept {return m_object_id;}
+			inline boost::uuids::uuid &get_object_id() noexcept {return m_object_id;}
 
 			// serialize
 			virtual bool is_serializable() = 0;

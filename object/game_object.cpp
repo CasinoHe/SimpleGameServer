@@ -8,22 +8,18 @@
 #include <string>
 
 #include <boost/make_shared.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_serialize.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 namespace simple_server {
 	namespace ar = boost::archive;
 
 	CGameObject::CGameObject(const std::string &name) noexcept:
-		logger(name + "_object") {
-		m_object_id = 0;
+		logger(name + "_object"),
+		m_object_id(boost::uuids::random_generator()()) {
 		m_component_map.clear();
 		m_name = name;
-
-		generate_id();
-	}
-
-	unsigned int CGameObject::generate_id() {
-		m_object_id = 1;
-		return m_object_id;
 	}
 
 	OArchivePtr CGameObject::get_serialization_data() {
@@ -36,7 +32,7 @@ namespace simple_server {
 
 	template<typename Archive>
 	void CGameObject::serialize(Archive &ar, unsigned const int version) {
-		ar & m_object_id;
+		ar & BOOST_SERIALIZATION_NVP(m_object_id);
 	}
 
 	CGameObject::~CGameObject() {
