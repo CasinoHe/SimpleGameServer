@@ -15,8 +15,6 @@
 #include <boost/uuid/uuid_io.hpp>
 
 namespace simple_server {
-	namespace ar = boost::archive;
-
 	CGameObject::CGameObject(const std::string &name, std::string &object_id):
 		logger(name + "_object") {
 		m_component_map.clear();
