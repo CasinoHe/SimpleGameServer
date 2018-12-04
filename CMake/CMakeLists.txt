@@ -26,21 +26,26 @@ set(SRC_FILES
 	${SOURCE_ROOT_DIR}/main.cpp
 )
 
+set(DEPENDENCIES_LIBS 
+	boost
+)
+
 set(CMAKE_CXX_STANDARD 11)
 add_executable(${PROJECT_NAME} ${SRC_FILES}
-	$<TARGET_OBJECTS:boost_thread>
-	$<TARGET_OBJECTS:boost_date_time>
-	$<TARGET_OBJECTS:boost_atomic>
-	$<TARGET_OBJECTS:boost_chrono>
-	$<TARGET_OBJECTS:boost_system>
-	$<TARGET_OBJECTS:boost_filesystem>
-	$<TARGET_OBJECTS:boost_log>
-	$<TARGET_OBJECTS:boost_program_options>
-	$<TARGET_OBJECTS:boost_serialization>
 )
 target_link_libraries(${PROJECT_NAME}
 	pthread
+	${CMAKE_BINARY_DIR}/libs/boost_thread
+	${CMAKE_BINARY_DIR}/libs/boost_date_time
+	${CMAKE_BINARY_DIR}/libs/boost_atomic
+	${CMAKE_BINARY_DIR}/libs/boost_chrono
+	${CMAKE_BINARY_DIR}/libs/boost_system
+	${CMAKE_BINARY_DIR}/libs/boost_filesystem
+	${CMAKE_BINARY_DIR}/libs/boost_log
+	${CMAKE_BINARY_DIR}/libs/boost_program_options
+	${CMAKE_BINARY_DIR}/libs/boost_serialization
 )
+add_dependencies(${PROJECT_NAME} ${DEPENDENCIES_LIBS})
 
 # log
 target_sources(${PROJECT_NAME} PRIVATE
