@@ -61,7 +61,7 @@ ExternalProject_Add(boost
 )
 
 foreach (lib ${NEED_BOOST_LIBS})
-	list(APPEND DEPENDENCIES_LIBS libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
+	list(APPEND DEPENDENCIES_LIBS boost_${lib})
 endforeach()
 
 list(APPEND NEED_INCLUDE_DIR ${BOOST_ROOT_DIR}/src/boost)
