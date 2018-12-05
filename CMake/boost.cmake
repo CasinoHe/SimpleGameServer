@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.10)
 
 include(ExternalProject)
 
+if (APPLE)
+	set(DYNAMIC_LIRBRARY_SUFFIX dylib)
+elseif (UNIX)
+	set(DYNAMIC_LIRBRARY_SUFFIX so)
+endif ()
+
 set(BOOST_MAJOR_VERSION 1)
 set(BOOST_MINOR_VERSION 68)
 set(BOOST_PATCH_VERSION 0)
@@ -25,13 +31,35 @@ else ()
 	set(BOOST_BUILD_COMMAND ./b2)
 endif ()
 
+# boost libs
+set(NEED_BOOST_LIBS
+	thread
+	date_time
+	atomic
+	chrono
+	system
+	filesystem
+	program_options
+	serialization
+	log
+)
+
+set(BOOST_BUILD_LIBRARIES)
+foreach(lib ${NEED_BOOST_LIBS})
+	string(APPEND BOOST_BUILD_LIBRARIES ${lib},)
+endforeach()
+
 ExternalProject_Add(boost
 	PREFIX ${BOOST_ROOT_DIR}
 	URL ${BOOST_DOWNLOAD_URL}
 	URL_HASH SHA256=${BOOST_SHA256}
 	UPDATE_COMMAND ""
-	CONFIGURE_COMMAND ${BOOTSTRAP_COMMAND} --prefix=${CMAKE_BINARY_DIR}/boost --exec-prefix=${CMAKE_BINARY_DIR}/libs --with-libraries=thread,system,filesystem,date_time,atomic,chrono,log,program_options,serialization
-	BUILD_COMMAND ${BOOST_BUILD_COMMAND} --prefix=${CMAKE_BINARY_DIR}/boost --exec-prefix=${CMAKE_BINARY_DIR}/libs --build_type=complete --build_dir=${BOOST_ROOT_DIR}/build --layout=sytem -d+2
-	BUILD_IN_SOURCE FALSE
+	CONFIGURE_COMMAND ${BOOTSTRAP_COMMAND} --prefix=${CMAKE_BINARY_DIR} --with-libraries=${BOOST_BUILD_LIBRARIES}
+	BUILD_COMMAND ${BOOST_BUILD_COMMAND} --prefix=${CMAKE_BINARY_DIR} --layout=system -d+2 variant=release link=shared threading=multi stage
+	BUILD_IN_SOURCE TRUE
 	INSTALL_COMMAND ""
 )
+
+foreach (lib ${NEED_BOOST_LIBS})
+	list(APPEND DEPENDENCIES_LIBS ${CMAKE_BINARY_DIR}/lib/libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
+endforeach()
