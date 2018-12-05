@@ -55,11 +55,13 @@ ExternalProject_Add(boost
 	URL_HASH SHA256=${BOOST_SHA256}
 	UPDATE_COMMAND ""
 	CONFIGURE_COMMAND ${BOOTSTRAP_COMMAND} --prefix=${CMAKE_BINARY_DIR} --with-libraries=${BOOST_BUILD_LIBRARIES}
-	BUILD_COMMAND ${BOOST_BUILD_COMMAND} --prefix=${CMAKE_BINARY_DIR} --layout=system -d+2 variant=release link=shared threading=multi stage
+	BUILD_COMMAND ${BOOST_BUILD_COMMAND} --prefix=${CMAKE_BINARY_DIR} --stagedir=${CMAKE_BINARY_DIR} --layout=system -d+2 variant=release link=shared threading=multi stage
 	BUILD_IN_SOURCE TRUE
 	INSTALL_COMMAND ""
 )
 
 foreach (lib ${NEED_BOOST_LIBS})
-	list(APPEND DEPENDENCIES_LIBS ${CMAKE_BINARY_DIR}/lib/libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
+	list(APPEND DEPENDENCIES_LIBS libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
 endforeach()
+
+list(APPEND NEED_INCLUDE_DIR ${BOOST_ROOT_DIR}/src/boost)
