@@ -61,7 +61,7 @@ ExternalProject_Add(boost
 )
 
 foreach (lib ${NEED_BOOST_LIBS})
-	list(APPEND DEPENDENCIES_LIBS boost_${lib})
+	list(APPEND DEPENDENCIES_LIBS ${CMAKE_BINARY_DIR}/lib/libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
 endforeach()
 
 list(APPEND NEED_INCLUDE_DIR ${BOOST_ROOT_DIR}/src/boost)
