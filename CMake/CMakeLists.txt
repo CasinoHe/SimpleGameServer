@@ -27,7 +27,7 @@ include_directories(${SOURCE_ROOT_DIR})
 include_directories(${NEED_INCLUDE_DIR})
 link_directories(${CMAKE_BINARY_DIR})
 
-set(CMAKE_EXE_LINKER_FLAGS -Wl,-rpath,'$ORIGIN')
+set(CMAKE_EXE_LINKER_FLAGS -Wl,-rpath,./lib)
 
 set(SRC_FILES
 	${SOURCE_ROOT_DIR}/main.cpp
