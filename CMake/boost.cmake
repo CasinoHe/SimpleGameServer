@@ -42,6 +42,7 @@ set(NEED_BOOST_LIBS
 	program_options
 	serialization
 	log
+	regex
 )
 
 set(BOOST_BUILD_LIBRARIES)
