@@ -6,6 +6,8 @@ if (APPLE)
 	set(DYNAMIC_LIRBRARY_SUFFIX dylib)
 elseif (UNIX)
 	set(DYNAMIC_LIRBRARY_SUFFIX so)
+elseif (WIN32)
+	set(DYNAMIC_LIRBRARY_SUFFIX dll)
 endif ()
 
 set(BOOST_MAJOR_VERSION 1)
@@ -56,7 +58,7 @@ ExternalProject_Add(boost
 	URL_HASH SHA256=${BOOST_SHA256}
 	UPDATE_COMMAND ""
 	CONFIGURE_COMMAND ${BOOTSTRAP_COMMAND} --prefix=${CMAKE_BINARY_DIR} --with-libraries=${BOOST_BUILD_LIBRARIES}
-	BUILD_COMMAND ${BOOST_BUILD_COMMAND} --prefix=${CMAKE_BINARY_DIR} --stagedir=${CMAKE_BINARY_DIR} --layout=system -d+2 variant=release link=shared threading=multi stage
+	BUILD_COMMAND ${BOOST_BUILD_COMMAND} --prefix=${CMAKE_BINARY_DIR} --stagedir=${CMAKE_BINARY_DIR} --layout=system -d+2 variant=release link=shared threading=multi address-model=${BOOST_ADDRESS_MODEL} stage
 	BUILD_IN_SOURCE TRUE
 	INSTALL_COMMAND ""
 )
