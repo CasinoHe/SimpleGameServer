@@ -7,7 +7,7 @@ if (APPLE)
 elseif (UNIX)
 	set(DYNAMIC_LIRBRARY_SUFFIX so)
 elseif (WIN32)
-	set(DYNAMIC_LIRBRARY_SUFFIX dll)
+	set(DYNAMIC_LIRBRARY_SUFFIX lib)
 endif ()
 
 set(BOOST_MAJOR_VERSION 1)
@@ -63,8 +63,14 @@ ExternalProject_Add(boost
 	INSTALL_COMMAND ""
 )
 
-foreach (lib ${NEED_BOOST_LIBS})
-	list(APPEND DEPENDENCIES_LIBS ${CMAKE_BINARY_DIR}/lib/libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
-endforeach()
+if (WIN32)
+	foreach (lib ${NEED_BOOST_LIBS})
+		list(APPEND DEPENDENCIES_LIBS ${CMAKE_BINARY_DIR}/lib/boost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
+	endforeach()
+else ()
+	foreach (lib ${NEED_BOOST_LIBS})
+		list(APPEND DEPENDENCIES_LIBS ${CMAKE_BINARY_DIR}/lib/libboost_${lib}.${DYNAMIC_LIRBRARY_SUFFIX})
+	endforeach()
+endif(WIN32)
 
 list(APPEND NEED_INCLUDE_DIR ${BOOST_ROOT_DIR}/src/boost)
