@@ -42,3 +42,4 @@ Build
 compile_commands.json
 
 .ropeproject
+.vscode
