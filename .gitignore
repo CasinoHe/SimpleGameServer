@@ -40,3 +40,5 @@ Build
 
 # compile commands
 compile_commands.json
+
+.ropeproject
