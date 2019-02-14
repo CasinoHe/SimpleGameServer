@@ -33,6 +33,7 @@
 
 # Thirdparty directories
 ThirdpartyPackages
+.vscode
 
 # Build directories
 build
