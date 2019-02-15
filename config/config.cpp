@@ -32,6 +32,7 @@ namespace simple_server {
 		try {
 			pt::read_json(m_filepath.string(), m_ptree);
 		} catch (std::exception &e) {
+			LOG_ERROR(logger) << "Catch error: " << e.what();
 			LOG_FATAL(logger) << "Parse config file: " << m_filepath << " failed.";
 			return false;
 		}

@@ -29,6 +29,8 @@ link_directories(${CMAKE_BINARY_DIR})
 
 if (WIN32)
 	# set(CMAKE_EXE_LINKER_FLAGS /WL,/LIBPATH,./lib)
+	set(CMAKE_VS_PLATFORM_NAME=x64)
+	set(CMAKE_GENERATOR_PLATFORM=x64)
 else()
 	set(CMAKE_EXE_LINKER_FLAGS -Wl,-rpath,./lib)
 endif (WIN32)
@@ -51,7 +53,7 @@ set(SRC_FILES
 )
 
 if (WIN32)
-	link_directories(${CMAKE_BINARY_DIR})
+	link_directories(${CMAKE_BINARY_DIR}/lib)
 endif(WIN32)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -71,3 +73,6 @@ else()
 endif(WIN32)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DBOOST_LOG_DYN_LINK=1)
+if (WIN32)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE -D_WIN32_WINNT=0X0A00)
+endif (WIN32)
