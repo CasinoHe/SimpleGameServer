@@ -48,6 +48,7 @@ set(SRC_FILES
 	# object
 	${SOURCE_ROOT_DIR}/object/game_object.cpp
 	${SOURCE_ROOT_DIR}/object/object_manager.cpp
+	${SOURCE_ROOT_DIR}/object/player/player_object.cpp
 	# test
 	${SOURCE_ROOT_DIR}/test/test.cpp
 )
