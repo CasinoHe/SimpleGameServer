@@ -6,4 +6,11 @@
 
 
 namespace simple_server {
+    CPlayerObject::CPlayerObject(std::string &name, std::string &object_id):
+        CGameObject(name, object_id) {
+    }
+
+    CPlayerObject::~CPlayerObject() {
+
+    }
 }

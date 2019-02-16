@@ -9,6 +9,8 @@
 
 #include "object/game_object.h"
 
+#include <string>
+
 namespace simple_server {
 	class CPlayerObject: public CGameObject {
 
@@ -16,7 +18,8 @@ namespace simple_server {
 		SERIALIZE_CLASS_HEAD;
 
 		public:
-			CPlayerObject();
+			CPlayerObject() = delete;
+			CPlayerObject(std::string &name, std::string &object_id);
 			virtual ~CPlayerObject();
 
 			inline virtual bool is_serializable() {return true;}
