@@ -27,7 +27,7 @@ namespace simple_server{
 				notify(m_values_map);
 				return true;
 			} catch (std::exception &e) {
-				std::cout << "Invalid argument!" << std::endl << std::endl;
+				std::cout << "Invalid argument!Error: " << e.what() << std::endl << std::endl;
 				help();
 				return false;
 			}
