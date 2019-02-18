@@ -57,9 +57,9 @@ namespace simple_server {
 	}
 
 	void CTcpGate::do_accept(asio::ip::tcp::endpoint peer_endpoint, asio::ip::tcp::socket socket) {
-		LOG_INFO(logger) << "TCP gate receives new connection: " << peer_endpoint.address() << " port:" << peer_endpoint.port();
-
+		// save connect info
 		boost::shared_ptr<CConnectionObject> conn_object_ptr = CObjectHelper::create_object<CConnectionObject>("Connection");
-		LOG_INFO(logger) << "Construct connection object, object_id is : " << conn_object_ptr->get_object_id();
+		LOG_INFO(logger) << "Tcp gate receives new connection: " << peer_endpoint.address() << " port: " << peer_endpoint.port()
+			<< "object id is: " << conn_object_ptr->get_object_id();
 	}
 }

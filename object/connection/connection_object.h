@@ -9,9 +9,10 @@
 
 #include "object/game_object.h"
 
-#include <string>
-
 #include <boost/asio.hpp>
+#include <boost/chrono.hpp>
+
+#include <string>
 
 namespace simple_server {
     class CConnectionObject: public CGameObject {
@@ -25,6 +26,9 @@ namespace simple_server {
             virtual ~CConnectionObject();
 
             inline virtual bool is_serializable() {return false;}
+
+        private:
+            boost::chrono::time_point<boost::chrono::steady_clock> m_connect_time;
     };
 }
 
