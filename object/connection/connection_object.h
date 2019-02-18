@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include <boost/asio.hpp>
+
 namespace simple_server {
     class CConnectionObject: public CGameObject {
 
@@ -19,7 +21,7 @@ namespace simple_server {
 
         public:
             CConnectionObject() = delete;
-            CConnectionObject(std::string &name, std::string &object_id);
+            CConnectionObject(const std::string &name = std::string("Connection"), std::string object_id = std::string());
             virtual ~CConnectionObject();
 
             inline virtual bool is_serializable() {return false;}

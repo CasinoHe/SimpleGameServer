@@ -5,7 +5,7 @@
 #include "object/connection/connection_object.h"
 
 namespace simple_server {
-    CConnectionObject::CConnectionObject(std::string &name, std::string &object_id):
+    CConnectionObject::CConnectionObject(const std::string &name, std::string object_id):
      CGameObject(name, object_id) {
     }
 

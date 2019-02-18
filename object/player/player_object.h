@@ -19,7 +19,7 @@ namespace simple_server {
 
 		public:
 			CPlayerObject() = delete;
-			CPlayerObject(std::string &name, std::string &object_id);
+			CPlayerObject(const std::string &name = std::string("Player"), std::string object_id = std::string());
 			virtual ~CPlayerObject();
 
 			inline virtual bool is_serializable() {return true;}
