@@ -11,6 +11,9 @@
 #include <boost/make_shared.hpp>
 #include <boost/bind.hpp>
 
+#include <chrono>
+#include <thread>
+
 
 namespace simple_server {
 	namespace asio = boost::asio;
@@ -59,7 +62,8 @@ namespace simple_server {
 	void CTcpGate::do_accept(asio::ip::tcp::endpoint peer_endpoint, asio::ip::tcp::socket socket) {
 		// save connect info
 		boost::shared_ptr<CConnectionObject> conn_object_ptr = CObjectHelper::create_object<CConnectionObject>("Connection");
-		LOG_INFO(logger) << "Tcp gate receives new connection: " << peer_endpoint.address() << " port: " << peer_endpoint.port()
-			<< "object id is: " << conn_object_ptr->get_object_id();
+		LOG_INFO(logger) << "Tcp gate receives new connection: " << peer_endpoint.address() << ". port: " << peer_endpoint.port()
+			<< ". object id is: " << conn_object_ptr->get_object_id();
+		conn_object_ptr->set_tcp_connection(std::move(socket));
 	}
 }
