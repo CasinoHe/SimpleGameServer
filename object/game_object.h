@@ -70,16 +70,17 @@ namespace simple_server {
 			boost::shared_ptr<CGameObjectComponent> get_component(const std::string &name);
 
 			std::string m_name;
-			CLogManager logger;
 
 		public:
-			CGameObject(const std::string &name, std::string &object_id);
+			CGameObject(const std::string &name, std::string object_id);
 			virtual ~CGameObject();
 
 			OArchivePtr get_serialization_data();
 			inline const std::string &get_object_id() const noexcept {return m_object_id;}
 
 			bool operator==(const CGameObject &object);
+
+			CLogManager m_logger;
 
 			// serialize
 			virtual bool is_serializable() = 0;

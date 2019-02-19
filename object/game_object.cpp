@@ -15,8 +15,8 @@
 #include <boost/uuid/uuid_io.hpp>
 
 namespace simple_server {
-	CGameObject::CGameObject(const std::string &name, std::string &object_id):
-		logger(name + "_object") {
+	CGameObject::CGameObject(const std::string &name, std::string object_id):
+		m_logger(name + "_object") {
 		m_component_map.clear();
 		m_name = name;
 
@@ -26,15 +26,6 @@ namespace simple_server {
 			m_object_id = boost::uuids::to_string(tag);
 		} else {
 			m_object_id = object_id;
-		}
-
-		CObjectManager object_manager = CObjectManager::get_object_manager();
-		if (!object_manager.add_object(shared_from_this())) {
-			std::string error("Cannot add object :");
-			error += m_object_id;
-
-			LOG_ERROR(logger) << error;
-			throw std::runtime_error(error);
 		}
 	}
 
