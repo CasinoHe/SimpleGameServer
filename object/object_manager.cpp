@@ -10,7 +10,7 @@
 
 namespace simple_server {
 	CObjectManager::OBJECT_MGR_PTR CObjectManager::get_object_manager() {
-		CObjectManager::OBJECT_MGR_PTR object_manager_ptr = boost::make_shared<CObjectManager>();
+		static CObjectManager::OBJECT_MGR_PTR object_manager_ptr = boost::make_shared<CObjectManager>();
 		return object_manager_ptr;
 	}
 

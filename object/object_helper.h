@@ -4,17 +4,17 @@
 
 #pragma once
 
+#ifndef SIMPLE_SERVER_OBJECT_OBJECT_HELPER
+#define SIMPLE_SERVER_OBJECT_OBJECT_HELPER
+
 #include "log/log.h"
 #include "object/game_object.h"
 #include "object/object_manager.h"
 
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
-
 #include <string>
 
-#ifndef SIMPLE_SERVER_OBJECT_OBJECT_HELPER
-#define SIMPLE_SERVER_OBJECT_OBJECT_HELPER
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 namespace simple_server {
     class CObjectHelper {

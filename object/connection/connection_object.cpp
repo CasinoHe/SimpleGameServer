@@ -5,7 +5,6 @@
 #include "log/log.h"
 #include "object/connection/connection_object.h"
 
-#include <iostream>
 
 namespace simple_server {
     CConnectionObject::CConnectionObject(const std::string &name, std::string object_id):
