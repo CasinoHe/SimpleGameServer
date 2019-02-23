@@ -13,10 +13,10 @@
 #include <unordered_map>
 
 #include <boost/shared_ptr.hpp>
-#include <iostream>
+#include <boost/noncopyable.hpp>
 
 namespace simple_server {
-	class CObjectManager {
+	class CObjectManager: public boost::noncopyable {
 		public:
 			typedef boost::shared_ptr<CGameObject> GAME_OBJECT_PTR;
 			typedef boost::shared_ptr<CObjectManager> OBJECT_MGR_PTR;
