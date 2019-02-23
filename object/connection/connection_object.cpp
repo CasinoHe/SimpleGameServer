@@ -5,10 +5,16 @@
 #include "log/log.h"
 #include "object/connection/connection_object.h"
 
+#include <iostream>
+
 namespace simple_server {
     CConnectionObject::CConnectionObject(const std::string &name, std::string object_id):
-     CGameObject(name, object_id) {
+     CGameObject(name, object_id),
+     m_tcp_socket_ptr(nullptr),
+     m_udp_socket_ptr(nullptr) {
          m_connect_time = boost::chrono::steady_clock::now();
+
+         LOG_DEBUG(m_logger) << "Create Connection Object: " << m_object_id;
     }
 
     CConnectionObject::~CConnectionObject() {
@@ -27,6 +33,8 @@ namespace simple_server {
 
             m_udp_socket_ptr.reset();
         }
+
+        LOG_DEBUG(m_logger) << "Destruct Connection Object: " << m_object_id;
     }
 
     bool CConnectionObject::set_tcp_connection(boost::asio::ip::tcp::socket socket) {

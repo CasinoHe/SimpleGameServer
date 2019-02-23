@@ -37,6 +37,7 @@ endif (WIN32)
 
 set(SRC_FILES
 	${SOURCE_ROOT_DIR}/main.cpp
+	${SOURCE_ROOT_DIR}/backend.cpp
 	# log
 	${SOURCE_ROOT_DIR}/log/log.cpp
 	# config

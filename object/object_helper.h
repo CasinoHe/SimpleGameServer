@@ -29,16 +29,15 @@ namespace simple_server {
 
     template<typename T>
     boost::shared_ptr<T> CObjectHelper::create_object(const std::string &name, std::string object_id) {
-
         boost::shared_ptr<T> object_ptr = boost::make_shared<T>(name, object_id);
         if (!object_ptr) {
             return nullptr;
         }
 
-        // get object manager instance
-		CObjectManager object_manager = CObjectManager::get_object_manager();
+        // get object manager instance pointer
+		CObjectManager::OBJECT_MGR_PTR object_manager_ptr = CObjectManager::get_object_manager();
         // add object to object manager
-		if (!object_manager.add_object(object_ptr)) {
+		if (!object_manager_ptr->add_object(object_ptr)) {
 			std::string error("Cannot add object :");
 			error += object_ptr->get_object_id();
 

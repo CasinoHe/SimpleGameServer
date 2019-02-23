@@ -28,7 +28,7 @@ namespace simple_server {
 			virtual void listen() override;
 			void do_accept(boost::asio::ip::tcp::endpoint endpoint, boost::asio::ip::tcp::socket socket);
 
-			CLogManager logger;
+			CLogManager m_logger;
 
 		private:
 			boost::shared_ptr<boost::asio::ip::tcp::endpoint> m_endpoint;
