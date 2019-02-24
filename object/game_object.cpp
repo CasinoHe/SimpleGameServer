@@ -27,6 +27,8 @@ namespace simple_server {
 		} else {
 			m_object_id = object_id;
 		}
+
+		LOG_INFO(m_logger) << "Create game object id [" << m_object_id << "]";
 	}
 
 	OArchivePtr CGameObject::get_serialization_data() {
@@ -49,6 +51,8 @@ namespace simple_server {
 
 		CObjectManager::OBJECT_MGR_PTR object_manager_ptr = CObjectManager::get_object_manager();
 		object_manager_ptr->remove_object(m_object_id);
+
+		LOG_INFO(m_logger) << "Destruct game object id [" << m_object_id << "]";
 	}
 
 	bool CGameObject::add_component(const std::string &name, boost::shared_ptr<CGameObjectComponent> component) {

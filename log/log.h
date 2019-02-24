@@ -38,6 +38,8 @@ namespace simple_server {
 			std::string m_filename;
 			LOGGER_MT_TYPE m_logger;
 			boost::log::trivial::severity_level m_level;
+
+			virtual void init_logger();
 	};
 
 	// log attributes for filename and linenum

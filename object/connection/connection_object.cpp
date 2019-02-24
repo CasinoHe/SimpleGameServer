@@ -12,8 +12,6 @@ namespace simple_server {
      m_tcp_socket_ptr(nullptr),
      m_udp_socket_ptr(nullptr) {
          m_connect_time = boost::chrono::steady_clock::now();
-
-         LOG_DEBUG(m_logger) << "Create Connection Object: " << m_object_id;
     }
 
     CConnectionObject::~CConnectionObject() {
