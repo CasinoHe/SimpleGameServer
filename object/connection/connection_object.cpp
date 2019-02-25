@@ -6,6 +6,8 @@
 #include "object/connection/connection_object.h"
 #include "object/component/schedule_component.h"
 
+#include <boost/enable_shared_from_this.hpp>
+
 
 namespace simple_server {
     CConnectionObject::CConnectionObject(const std::string &name, std::string object_id):
@@ -13,8 +15,6 @@ namespace simple_server {
      m_tcp_socket_ptr(nullptr),
      m_udp_socket_ptr(nullptr) {
          m_connect_time = boost::chrono::steady_clock::now();
-
-         // add schedule component
     }
 
     CConnectionObject::~CConnectionObject() {
@@ -35,6 +35,12 @@ namespace simple_server {
         }
 
         LOG_DEBUG(m_logger) << "Destruct Connection Object: " << m_object_id;
+    }
+
+    bool CConnectionObject::load_components() {
+        // add schedule component
+        boost::shared_ptr<CScheduleComponent> schedule_comp = boost::make_shared<CScheduleComponent>(shared_from_this());
+        add_component(schedule_comp->get_component_name(), schedule_comp);
     }
 
     bool CConnectionObject::set_tcp_connection(boost::asio::ip::tcp::socket socket) {

@@ -27,6 +27,8 @@ namespace simple_server {
 			CGameObjectComponent(boost::shared_ptr<class CGameObject> obj_ptr, const std::string &name);
 			CGameObjectComponent(CGameObjectComponent &comp) = delete;
 			virtual ~CGameObjectComponent();
+
+			inline const std::string &get_component_name() noexcept {return m_name;}
 	};
 }
 

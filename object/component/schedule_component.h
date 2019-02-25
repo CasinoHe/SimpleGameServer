@@ -22,6 +22,9 @@ namespace simple_server {
         private:
             std::list<SScheduleData> m_schedule_list;
 
+        protected:
+            virtual bool is_serializable() {return true;}
+
         public:
             CScheduleComponent(boost::shared_ptr<CGameObject> obj_ptr);
             virtual ~CScheduleComponent();

@@ -30,6 +30,8 @@ namespace simple_server {
 
             bool set_tcp_connection(boost::asio::ip::tcp::socket socket);
             bool set_udp_connection(boost::asio::ip::udp::socket &socket);
+
+            virtual bool load_components();
         private:
             boost::chrono::time_point<boost::chrono::steady_clock> m_connect_time;
 

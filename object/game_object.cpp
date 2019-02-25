@@ -88,4 +88,8 @@ namespace simple_server {
 			return false;
 		}
 	}
+
+	bool CGameObject::load_components() {
+		return true;
+	}
 }

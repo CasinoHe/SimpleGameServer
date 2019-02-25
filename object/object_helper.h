@@ -34,6 +34,9 @@ namespace simple_server {
             return nullptr;
         }
 
+        // add components
+        object_ptr->load_components();
+
         // get object manager instance pointer
 		CObjectManager::OBJECT_MGR_PTR object_manager_ptr = CObjectManager::get_object_manager();
         // add object to object manager

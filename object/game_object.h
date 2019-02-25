@@ -84,6 +84,8 @@ namespace simple_server {
 
 			// serialize
 			virtual bool is_serializable() = 0;
+			// load component
+			virtual bool load_components();
 	};
 }
 
