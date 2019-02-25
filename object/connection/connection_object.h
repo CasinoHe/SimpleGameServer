@@ -11,6 +11,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/chrono.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <string>
 
@@ -27,8 +28,13 @@ namespace simple_server {
 
             inline virtual bool is_serializable() {return false;}
 
+            bool set_tcp_connection(boost::asio::ip::tcp::socket socket);
+            bool set_udp_connection(boost::asio::ip::udp::socket &socket);
         private:
             boost::chrono::time_point<boost::chrono::steady_clock> m_connect_time;
+
+            boost::shared_ptr<boost::asio::ip::tcp::socket> m_tcp_socket_ptr;
+            boost::shared_ptr<boost::asio::ip::udp::socket> m_udp_socket_ptr;
     };
 }
 

@@ -18,25 +18,30 @@ namespace simple_server {
 	bool CLogManager::has_init = false;
 	CLogManager g_logger = CLogManager("global");
 
+	void CLogManager::init_logger() {
+		m_level = boost::log::trivial::info;
+
+		// static initialize
+		initialize_log_sinks();
+
+		// log sources
+		if (m_filename.size() <= 0)
+		{
+			throw std::invalid_argument("cannot initialize log without filename");
+		}
+
+		m_logger.add_attribute("FileTag", boost::log::attributes::constant<std::string>(m_filename));
+	}
+
 	CLogManager::CLogManager(const std::string filename):
 		m_filename(filename) {
-			CLogManager(filename.c_str());
-		}
+		init_logger();
+	}
 
 	CLogManager::CLogManager(const char *filename):
 		m_filename(filename) {
-			m_level = boost::log::trivial::info;
-
-			// static initialize
-			initialize_log_sinks();
-
-			// log sources
-			if (m_filename.size() <= 0) {
-				throw std::invalid_argument("cannot initialize log without filename");
-			}
-
-			m_logger.add_attribute("FileTag", boost::log::attributes::constant<std::string>(m_filename));
-		}
+		init_logger();
+	}
 
 	void CLogManager::initialize_log_sinks() {
 		if (has_init) {

@@ -11,12 +11,15 @@
 #include <boost/make_shared.hpp>
 #include <boost/bind.hpp>
 
+#include <chrono>
+#include <thread>
+
 
 namespace simple_server {
 	namespace asio = boost::asio;
 	CTcpGate::CTcpGate(const std::string ip, const unsigned int port): 
 		CGateBase(1),
-		logger("tcp_gate") {
+		m_logger("tcp_gate") {
 
 		initialize(ip, port);
 		if (!bind()) {
@@ -30,12 +33,13 @@ namespace simple_server {
 		boost::system::error_code err;
 		asio::ip::address ip_address = asio::ip::make_address(m_ip, err);
 		if (err) {
-			LOG_ERROR(logger) << "Cannot bind address " << m_ip;
+			LOG_ERROR(m_logger) << "Cannot bind address " << m_ip;
 			return false;
 		} 
 
 		m_endpoint = boost::make_shared<asio::ip::tcp::endpoint>(ip_address, m_port);
 		m_acceptor = boost::make_shared<asio::ip::tcp::acceptor>(io_context, *m_endpoint);
+
 		return true;
 	}
 
@@ -45,7 +49,7 @@ namespace simple_server {
 				peer_endpoint,
 				[this, peer_endpoint] (boost::system::error_code ec, asio::ip::tcp::socket socket) {
 				if (ec) {
-					LOG_ERROR(logger) << "Accept socket failed.Message: " << ec.message();
+					LOG_ERROR(m_logger) << "Accept socket failed.Message: " << ec.message();
 					listen();
 					return;
 				}
@@ -58,8 +62,9 @@ namespace simple_server {
 
 	void CTcpGate::do_accept(asio::ip::tcp::endpoint peer_endpoint, asio::ip::tcp::socket socket) {
 		// save connect info
-		boost::shared_ptr<CConnectionObject> conn_object_ptr = CObjectHelper::create_object<CConnectionObject>("Connection");
-		LOG_INFO(logger) << "Tcp gate receives new connection: " << peer_endpoint.address() << " port: " << peer_endpoint.port()
-			<< "object id is: " << conn_object_ptr->get_object_id();
+		boost::shared_ptr<CConnectionObject> conn_object_ptr = CObjectHelper::create_object<CConnectionObject>("tcp_connection");
+		LOG_INFO(m_logger) << "Tcp gate receives new connection: " << peer_endpoint.address() << ". port: " << peer_endpoint.port()
+			<< ". object id is: " << conn_object_ptr->get_object_id();
+		conn_object_ptr->set_tcp_connection(std::move(socket));
 	}
 }

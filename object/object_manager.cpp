@@ -4,12 +4,14 @@
 
 #include "object/object_manager.h"
 
+#include <boost/make_shared.hpp>
+
 #include <string>
 
 namespace simple_server {
-	CObjectManager& CObjectManager::get_object_manager() {
-		static CObjectManager object_manager;
-		return object_manager;
+	CObjectManager::OBJECT_MGR_PTR CObjectManager::get_object_manager() {
+		static CObjectManager::OBJECT_MGR_PTR object_manager_ptr = boost::make_shared<CObjectManager>();
+		return object_manager_ptr;
 	}
 
 	CObjectManager::GAME_OBJECT_PTR CObjectManager::find_object(const std::string &object_id) {
