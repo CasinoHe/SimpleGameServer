@@ -39,7 +39,7 @@ namespace simple_server {
 			LOGGER_MT_TYPE m_logger;
 			boost::log::trivial::severity_level m_level;
 
-			virtual void init_logger();
+			void init_logger();
 	};
 
 	// log attributes for filename and linenum
