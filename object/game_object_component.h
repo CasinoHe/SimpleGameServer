@@ -9,11 +9,13 @@
 
 #include "log/log.h"
 
-#include <boost/shared_ptr.hpp>
 #include <string>
 
+#include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
+
 namespace simple_server {
-	class CGameObjectComponent {
+	class CGameObjectComponent: public boost::noncopyable {
 		protected:
 			boost::shared_ptr<class CGameObject> m_owner;
 			std::string m_name;
@@ -22,7 +24,7 @@ namespace simple_server {
 		public:
 			virtual bool is_serializable() = 0;
 
-			CGameObjectComponent(boost::shared_ptr<class CGameObject> obj_ptr);
+			CGameObjectComponent(boost::shared_ptr<class CGameObject> obj_ptr, const std::string &name);
 			CGameObjectComponent(CGameObjectComponent &comp) = delete;
 			virtual ~CGameObjectComponent();
 	};
