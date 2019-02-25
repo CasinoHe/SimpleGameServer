@@ -4,6 +4,7 @@
 
 #include "log/log.h"
 #include "object/connection/connection_object.h"
+#include "object/component/schedule_component.h"
 
 
 namespace simple_server {
@@ -12,6 +13,8 @@ namespace simple_server {
      m_tcp_socket_ptr(nullptr),
      m_udp_socket_ptr(nullptr) {
          m_connect_time = boost::chrono::steady_clock::now();
+
+         // add schedule component
     }
 
     CConnectionObject::~CConnectionObject() {

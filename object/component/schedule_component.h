@@ -6,8 +6,8 @@
 #define SIMPLE_SERVER_OBJECT_CONNECTION_CONN_SCHEDULE_COMPONENT_H
 
 
-#include "object/game_object.h"
 #include "schedule/schedule.h"
+#include "object/game_object.h"
 #include "object/game_object_component.h"
 
 #include <list>
@@ -16,13 +16,15 @@
 #include <boost/shared_ptr.hpp>
 
 namespace simple_server {
-    class CConnectionScheduleComponent : public CGameObjectComponent {
+    class CGameObject;
+
+    class CScheduleComponent : public CGameObjectComponent {
         private:
             std::list<SScheduleData> m_schedule_list;
 
         public:
-            CConnectionScheduleComponent(boost::shared_ptr<CGameObject> obj_ptr, const std::string &name);
-            virtual ~CConnectionScheduleComponent();
+            CScheduleComponent(boost::shared_ptr<CGameObject> obj_ptr);
+            virtual ~CScheduleComponent();
     };
 } // namespace simple_server
 

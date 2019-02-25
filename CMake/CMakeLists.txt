@@ -48,11 +48,12 @@ set(SRC_FILES
 	${SOURCE_ROOT_DIR}/network/tcp_gate.cpp
 	# object
 	${SOURCE_ROOT_DIR}/object/game_object.cpp
-	${SOURCE_ROOT_DIR}/object/game_object_component.cpp
 	${SOURCE_ROOT_DIR}/object/object_manager.cpp
 	${SOURCE_ROOT_DIR}/object/player/player_object.cpp
 	${SOURCE_ROOT_DIR}/object/connection/connection_object.cpp
-	${SOURCE_ROOT_DIR}/object/connection/conn_schedule_component.cpp
+	# component
+	${SOURCE_ROOT_DIR}/object/game_object_component.cpp
+	${SOURCE_ROOT_DIR}/object/component/schedule_component.cpp
 	# test
 	${SOURCE_ROOT_DIR}/test/test.cpp
 )
