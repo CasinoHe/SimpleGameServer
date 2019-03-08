@@ -6,15 +6,13 @@
 #include "object/connection/connection_object.h"
 #include "object/component/schedule_component.h"
 
-#include <boost/enable_shared_from_this.hpp>
-
 
 namespace simple_server {
     CConnectionObject::CConnectionObject(const std::string &name, std::string object_id):
      CGameObject(name, object_id),
      m_tcp_socket_ptr(nullptr),
      m_udp_socket_ptr(nullptr) {
-         m_connect_time = boost::chrono::steady_clock::now();
+         m_connect_time = std::chrono::steady_clock::now();
     }
 
     CConnectionObject::~CConnectionObject() {
@@ -39,8 +37,9 @@ namespace simple_server {
 
     bool CConnectionObject::load_components() {
         // add schedule component
-        boost::shared_ptr<CScheduleComponent> schedule_comp = boost::make_shared<CScheduleComponent>(shared_from_this());
+        std::shared_ptr<CScheduleComponent> schedule_comp = std::make_shared<CScheduleComponent>(shared_from_this());
         add_component(schedule_comp->get_component_name(), schedule_comp);
+        return true;
     }
 
     bool CConnectionObject::set_tcp_connection(boost::asio::ip::tcp::socket socket) {
@@ -48,7 +47,7 @@ namespace simple_server {
             m_tcp_socket_ptr->close();
         }
 
-        m_tcp_socket_ptr = boost::make_shared<boost::asio::ip::tcp::socket>(std::move(socket));
+        m_tcp_socket_ptr = std::make_shared<boost::asio::ip::tcp::socket>(std::move(socket));
 
         // set keep alive
         boost::asio::socket_base::keep_alive alive_option(true);

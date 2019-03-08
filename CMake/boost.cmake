@@ -38,7 +38,6 @@ set(NEED_BOOST_LIBS
 	thread
 	date_time
 	atomic
-	chrono
 	system
 	filesystem
 	program_options

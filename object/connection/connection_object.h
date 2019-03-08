@@ -10,10 +10,10 @@
 #include "object/game_object.h"
 
 #include <boost/asio.hpp>
-#include <boost/chrono.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include <string>
+#include <memory>
+#include <chrono>
 
 namespace simple_server {
     class CConnectionObject: public CGameObject {
@@ -33,10 +33,10 @@ namespace simple_server {
 
             virtual bool load_components();
         private:
-            boost::chrono::time_point<boost::chrono::steady_clock> m_connect_time;
+            std::chrono::time_point<std::chrono::steady_clock> m_connect_time;
 
-            boost::shared_ptr<boost::asio::ip::tcp::socket> m_tcp_socket_ptr;
-            boost::shared_ptr<boost::asio::ip::udp::socket> m_udp_socket_ptr;
+            std::shared_ptr<boost::asio::ip::tcp::socket> m_tcp_socket_ptr;
+            std::shared_ptr<boost::asio::ip::udp::socket> m_udp_socket_ptr;
     };
 }
 

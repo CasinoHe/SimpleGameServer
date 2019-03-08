@@ -12,15 +12,14 @@
 #include "object/object_manager.h"
 
 #include <string>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 
 namespace simple_server {
     class CObjectHelper {
         public:
             template<typename T>
-            static boost::shared_ptr<T> create_object(const std::string &name, std::string object_id = std::string());
+            static std::shared_ptr<T> create_object(const std::string &name, std::string object_id = std::string());
 
             CObjectHelper(): m_logger("ObjectHelper") {}
 
@@ -28,8 +27,8 @@ namespace simple_server {
     };
 
     template<typename T>
-    boost::shared_ptr<T> CObjectHelper::create_object(const std::string &name, std::string object_id) {
-        boost::shared_ptr<T> object_ptr = boost::make_shared<T>(name, object_id);
+    std::shared_ptr<T> CObjectHelper::create_object(const std::string &name, std::string object_id) {
+        std::shared_ptr<T> object_ptr = std::make_shared<T>(name, object_id);
         if (!object_ptr) {
             return nullptr;
         }

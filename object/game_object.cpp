@@ -7,8 +7,8 @@
 
 #include <sstream>
 #include <string>
+#include <memory>
 
-#include <boost/make_shared.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_serialize.hpp>
@@ -32,8 +32,8 @@ namespace simple_server {
 	}
 
 	OArchivePtr CGameObject::get_serialization_data() {
-		boost::shared_ptr<std::stringstream> ss = boost::make_shared<std::stringstream>();
-		OArchivePtr os = boost::make_shared<OArchive>(*ss);
+		std::shared_ptr<std::stringstream> ss = std::make_shared<std::stringstream>();
+		OArchivePtr os = std::make_shared<OArchive>(*ss);
 
 		(*os) << (*this);
 		return os;
@@ -55,7 +55,7 @@ namespace simple_server {
 		LOG_INFO(m_logger) << "Destruct game object id [" << m_object_id << "]";
 	}
 
-	bool CGameObject::add_component(const std::string &name, boost::shared_ptr<CGameObjectComponent> component) {
+	bool CGameObject::add_component(const std::string &name, std::shared_ptr<CGameObjectComponent> component) {
 		if (m_component_map.find(name) != m_component_map.end()) {
 			return false;
 		} else {
@@ -73,7 +73,7 @@ namespace simple_server {
 		return true;
 	}
 
-	boost::shared_ptr<CGameObjectComponent> CGameObject::get_component(const std::string &name) {
+	std::shared_ptr<CGameObjectComponent> CGameObject::get_component(const std::string &name) {
 		if (m_component_map.find(name) == m_component_map.end()) {
 			return nullptr;
 		} else {

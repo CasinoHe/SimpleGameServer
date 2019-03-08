@@ -11,15 +11,15 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
 namespace simple_server {
 	class CObjectManager: public boost::noncopyable {
 		public:
-			typedef boost::shared_ptr<CGameObject> GAME_OBJECT_PTR;
-			typedef boost::shared_ptr<CObjectManager> OBJECT_MGR_PTR;
+			typedef std::shared_ptr<CGameObject> GAME_OBJECT_PTR;
+			typedef std::shared_ptr<CObjectManager> OBJECT_MGR_PTR;
 
 			static OBJECT_MGR_PTR get_object_manager();
 		private:

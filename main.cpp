@@ -8,12 +8,11 @@
 #include "test/test.h"
 #include "network/gate_base.h"
 #include "network/tcp_gate.h"
+#include "ecs/entity_base.h"
 
 #include <iostream>
 #include <list>
-
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 using namespace simple_server;
 
@@ -30,7 +29,7 @@ void record_and_print(const std::string &msg) {
 }
 
 
-void configure_one_gate(CConfigManager &configs, std::string &root_key, unsigned int index, std::list<boost::shared_ptr<CGateBase> > &gate_list) {
+void configure_one_gate(CConfigManager &configs, std::string &root_key, unsigned int index, std::list<std::shared_ptr<CGateBase> > &gate_list) {
 	std::string server_key = root_key + ".server" + std::to_string(index);
 	std::string listen_ip_key = server_key + ".listen_ip";
 	std::string listen_port_key = server_key + ".listen_port";
@@ -62,14 +61,14 @@ void configure_one_gate(CConfigManager &configs, std::string &root_key, unsigned
 
 	if (listen_proto == "tcp") {
 		record_and_print("Simple server start " + listen_proto + " gate, ip: " + listen_ip + " port: " + std::to_string(listen_port));
-		boost::shared_ptr<CTcpGate> gate = boost::make_shared<CTcpGate>(listen_ip, listen_port);
+		std::shared_ptr<CTcpGate> gate = std::make_shared<CTcpGate>(listen_ip, listen_port);
 		gate_list.push_back(gate);
 	} else {
 	}
 }
 
 
-void configure_gates(COptionsManager &options, CConfigManager & configs, std::list<boost::shared_ptr<CGateBase> > &gate_list) {
+void configure_gates(COptionsManager &options, CConfigManager & configs, std::list<std::shared_ptr<CGateBase> > &gate_list) {
 	// config key
 	std::string config_key = options.get_config_key();
 
@@ -90,6 +89,21 @@ void configure_gates(COptionsManager &options, CConfigManager & configs, std::li
 
 void run() {
 	io_context.run();
+}
+
+
+void test_entity()
+{
+	class TestComponent {
+		public:
+		TestComponent(int x, int y) {m_x = x;m_y = y;}
+		int m_x;
+		int m_y;
+	};
+
+	ecs::CEntityBase entity;
+	auto p = entity.new_component<TestComponent>(3, 4);
+	std::cout << p << std::endl;
 }
 
 
@@ -138,10 +152,11 @@ int main(int argc, const char **argv) {
 	std::cout << std::endl;
 
 	// configure gate
-	std::list<boost::shared_ptr<CGateBase> > gate_list;
+	std::list<std::shared_ptr<CGateBase> > gate_list;
 	gate_list.clear();
 	configure_gates(options, configs, gate_list);
 
+	test_entity();
 	// poll run
 	// TODO: thread
 	run();

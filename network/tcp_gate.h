@@ -11,9 +11,9 @@
 #include "log/log.h"
 
 #include <string>
+#include <memory>
 
 #include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace simple_server {
 	class CTcpGate: public CGateBase {
@@ -31,8 +31,8 @@ namespace simple_server {
 			CLogManager m_logger;
 
 		private:
-			boost::shared_ptr<boost::asio::ip::tcp::endpoint> m_endpoint;
-			boost::shared_ptr<boost::asio::ip::tcp::acceptor> m_acceptor;
+			std::shared_ptr<boost::asio::ip::tcp::endpoint> m_endpoint;
+			std::shared_ptr<boost::asio::ip::tcp::acceptor> m_acceptor;
 	};
 }
 

@@ -12,8 +12,8 @@
 
 #include <list>
 #include <string>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
 
 namespace simple_server {
     class CGameObject;
@@ -26,8 +26,10 @@ namespace simple_server {
             virtual bool is_serializable() {return true;}
 
         public:
-            CScheduleComponent(boost::shared_ptr<CGameObject> obj_ptr);
+            CScheduleComponent(std::shared_ptr<CGameObject> obj_ptr);
             virtual ~CScheduleComponent();
+
+            virtual void on_timer();
     };
 } // namespace simple_server
 

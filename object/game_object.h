@@ -26,21 +26,19 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include <boost/dll.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 #define SIMPLE_SERVER_API extern "C" BOOST_SYMBOL_EXPORT
 
 typedef boost::archive::binary_iarchive IArchive;
 typedef boost::archive::binary_oarchive OArchive;
-typedef boost::shared_ptr<IArchive> IArchivePtr;
-typedef boost::shared_ptr<OArchive> OArchivePtr;
+typedef std::shared_ptr<IArchive> IArchivePtr;
+typedef std::shared_ptr<OArchive> OArchivePtr;
 
 #define SERIALIZE_CLASS_HEAD private:\
 		friend boost::serialization::access;\
@@ -57,17 +55,17 @@ typedef boost::shared_ptr<OArchive> OArchivePtr;
 
 
 namespace simple_server {
-	class CGameObject: public boost::enable_shared_from_this<CGameObject> {
+	class CGameObject: public std::enable_shared_from_this<CGameObject> {
 
 		// class need to be serialized
 		SERIALIZE_CLASS_HEAD;
 
 		protected:
 			std::string m_object_id;
-			std::unordered_map<std::string, boost::shared_ptr<CGameObjectComponent> > m_component_map;
-			bool add_component(const std::string &name, boost::shared_ptr<CGameObjectComponent> component);
+			std::unordered_map<std::string, std::shared_ptr<CGameObjectComponent> > m_component_map;
+			bool add_component(const std::string &name, std::shared_ptr<CGameObjectComponent> component);
 			bool remove_component(const std::string &name);
-			boost::shared_ptr<CGameObjectComponent> get_component(const std::string &name);
+			std::shared_ptr<CGameObjectComponent> get_component(const std::string &name);
 
 			std::string m_name;
 

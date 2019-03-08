@@ -7,12 +7,9 @@
 #include "object/connection/connection_object.h"
 
 #include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/bind.hpp>
 
-#include <chrono>
-#include <thread>
+#include <memory>
 
 
 namespace simple_server {
@@ -37,8 +34,8 @@ namespace simple_server {
 			return false;
 		} 
 
-		m_endpoint = boost::make_shared<asio::ip::tcp::endpoint>(ip_address, m_port);
-		m_acceptor = boost::make_shared<asio::ip::tcp::acceptor>(io_context, *m_endpoint);
+		m_endpoint = std::make_shared<asio::ip::tcp::endpoint>(ip_address, m_port);
+		m_acceptor = std::make_shared<asio::ip::tcp::acceptor>(io_context, *m_endpoint);
 
 		return true;
 	}
@@ -62,7 +59,7 @@ namespace simple_server {
 
 	void CTcpGate::do_accept(asio::ip::tcp::endpoint peer_endpoint, asio::ip::tcp::socket socket) {
 		// save connect info
-		boost::shared_ptr<CConnectionObject> conn_object_ptr = CObjectHelper::create_object<CConnectionObject>("tcp_connection");
+		std::shared_ptr<CConnectionObject> conn_object_ptr = CObjectHelper::create_object<CConnectionObject>("tcp_connection");
 		LOG_INFO(m_logger) << "Tcp gate receives new connection: " << peer_endpoint.address() << ". port: " << peer_endpoint.port()
 			<< ". object id is: " << conn_object_ptr->get_object_id();
 		conn_object_ptr->set_tcp_connection(std::move(socket));
