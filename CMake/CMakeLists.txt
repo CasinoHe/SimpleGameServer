@@ -1,5 +1,5 @@
 # CMake for SimpleGameServer
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.13.0)
 
 project(SimpleGameServer)
 
@@ -62,8 +62,8 @@ if (WIN32)
 	link_directories(${CMAKE_BINARY_DIR}/lib)
 endif(WIN32)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSION OFF)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 add_dependencies(${PROJECT_NAME} ${NEED_BUILD_LIBS})
 

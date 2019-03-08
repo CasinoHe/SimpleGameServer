@@ -42,6 +42,7 @@ set(NEED_BOOST_LIBS
 	filesystem
 	program_options
 	serialization
+	chrono
 	log
 	regex
 )
