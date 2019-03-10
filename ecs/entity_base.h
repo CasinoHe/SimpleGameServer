@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <memory>
 #include <iostream>
+#include <string>
 
 #include <boost/noncopyable.hpp>
 
@@ -22,10 +23,8 @@ class CComponentWrapper : public boost::noncopyable
 {
 public:
   CComponentWrapper(std::shared_ptr<T> component);
-
   virtual ~CComponentWrapper();
-  virtual void on_remove();
-  virtual void on_assign();
+
   std::shared_ptr<T> get() { return m_component_ptr; }
 
 private:
@@ -35,8 +34,10 @@ private:
 class CEntityBase : public boost::noncopyable
 {
 public:
-  CEntityBase();
+  CEntityBase(const std::string &entityid);
   virtual ~CEntityBase();
+
+  const std::string &get_entityid() {return m_entityid_str;}
 
   // interface for component
   template <typename T, typename... Types>
@@ -50,6 +51,7 @@ public:
 
 private:
   std::unordered_map<size_t, std::shared_ptr<void>> m_components_map;
+  std::string m_entityid_str;
 };
 
 // function definition
@@ -61,24 +63,6 @@ CComponentWrapper<T>::CComponentWrapper(std::shared_ptr<T> component)
 
 template <typename T>
 CComponentWrapper<T>::~CComponentWrapper()
-{
-}
-
-template <typename T>
-void CComponentWrapper<T>::on_remove()
-{
-}
-
-template <typename T>
-void CComponentWrapper<T>::on_assign()
-{
-}
-
-CEntityBase::CEntityBase()
-{
-}
-
-CEntityBase::~CEntityBase()
 {
 }
 

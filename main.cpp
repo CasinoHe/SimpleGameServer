@@ -101,31 +101,6 @@ void run()
   io_context.run();
 }
 
-void test_entity()
-{
-  class TestComponent
-  {
-  public:
-    TestComponent(int x, int y)
-    {
-      m_x = x;
-      m_y = y;
-    }
-    int m_x;
-    int m_y;
-  };
-
-  ecs::CEntityBase entity;
-  auto p = entity.new_component<TestComponent>(3, 4);
-  std::cout << p << "   " << p->m_x << "  " << p->m_y << std::endl;
-
-  std::shared_ptr<TestComponent> ptr = entity.get_component<TestComponent>();
-  if (ptr)
-  {
-    std::cout << "found " << ptr->m_x << " " << ptr->m_y << std::endl;
-  }
-}
-
 int main(int argc, const char **argv)
 {
   record_and_print("Simple server staring....");
@@ -181,7 +156,6 @@ int main(int argc, const char **argv)
   gate_list.clear();
   configure_gates(options, configs, gate_list);
 
-  test_entity();
   // poll run
   // TODO: thread
   run();

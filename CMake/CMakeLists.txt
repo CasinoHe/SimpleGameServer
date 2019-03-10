@@ -51,6 +51,7 @@ set(SRC_FILES
 	${SOURCE_ROOT_DIR}/object/object_manager.cpp
 	${SOURCE_ROOT_DIR}/object/player/player_object.cpp
 	${SOURCE_ROOT_DIR}/object/connection/connection_object.cpp
+	${SOURCE_ROOT_DIR}/ecs/entity_base.cpp
 	# component
 	${SOURCE_ROOT_DIR}/object/game_object_component.cpp
 	${SOURCE_ROOT_DIR}/object/component/schedule_component.cpp
