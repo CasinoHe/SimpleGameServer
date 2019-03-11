@@ -26,6 +26,10 @@ public:
   inline bool disable() { m_is_enabled = false; }
   virtual bool configure(std::shared_ptr<CWorldBase> wolrd_ptr);
   virtual bool unconfigure();
+  virtual void frame_tick();
+
+  template <typename EventType, typename... EventArgs>
+  void trigger_event(EventType event, EventArgs ...args);
 
 private:
   bool m_is_enabled;
@@ -67,6 +71,16 @@ bool CSystemBase::unconfigure()
   m_is_configured = false;
   m_world_ptr = nullptr;
   return true;
+}
+
+void CSystemBase::frame_tick()
+{
+  return;
+}
+
+template <typename EventType, typename ...EventArgs>
+void CSystemBase::trigger_event(EventType event, EventArgs ...args)
+{
 }
 
 } // namespace ecs
