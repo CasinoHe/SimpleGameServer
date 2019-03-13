@@ -33,7 +33,7 @@ public:
   inline bool disable() { m_is_enabled = false; }
   virtual bool configure(std::shared_ptr<CWorldBase> wolrd_ptr);
   virtual bool unconfigure();
-  virtual void frame_tick();
+  virtual void frame_tick(std::shared_ptr<CWorldBase>, CEventBase &event);
 
   template <typename EventType>
   void on_event(std::shared_ptr<CWorldBase> world_ptr, EventType &event);
@@ -42,6 +42,10 @@ public:
   bool register_event_handler(std::function<void (std::shared_ptr<CWorldBase>, CEventBase &)>);
   template <typename EventType>
   bool unregister_event_handler();
+
+  // particularly, there is a frame tick handler for tick event
+  template <typename T>
+  void register_frame_tick_handler();
 
 private:
   bool m_is_enabled;
@@ -86,7 +90,7 @@ bool CSystemBase::unconfigure()
   return true;
 }
 
-void CSystemBase::frame_tick()
+void CSystemBase::frame_tick(std::shared_ptr<CWorldBase> world_ptr, CEventBase &event)
 {
   return;
 }
@@ -130,6 +134,13 @@ bool CSystemBase::unregister_event_handler()
 {
   size_t hash = typeid(EventType).hash_code();
   return 1 == m_event_handler_map.erase(hash);
+}
+
+template <typename T>
+void CSystemBase::register_frame_tick_handler()
+{
+  std::function<void (std::shared_ptr<CWorldBase>, CEventBase &)> function = std::bind(&T::frame_tick, this, std::placeholders::_1, std::placeholders::_2);
+  register_event_handler<CTickEvent>(function);
 }
 
 } // namespace ecs

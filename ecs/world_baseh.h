@@ -6,6 +6,7 @@
 
 #include "ecs/system_base.h"
 #include "ecs/entity_base.h"
+#include "ecs/event_base.hpp"
 
 #ifdef ECS_USE_LOG
 #include "log/log.h"
@@ -37,11 +38,6 @@ public:
   template <typename T>
   bool disable_system();
 
-  template <typename T>
-  bool enable_system_frame_tick();
-  template <typename T>
-  bool disable_system_frame_tick();
-
   // called by environment tick function
   // tick every frame
   void frame_tick();
@@ -58,7 +54,7 @@ public:
 
   // emit event
   template <typename EventType>
-  void emit(EventType event);
+  void emit(EventType &event);
 
 protected:
   template <typename T>
@@ -67,7 +63,6 @@ protected:
 private:
   std::unordered_map<size_t, std::shared_ptr<CSystemBase>> m_systems_map;
   std::unordered_map<std::string, std::shared_ptr<CEntityBase>> m_entities_map;
-  std::unordered_map<size_t, std::shared_ptr<CSystemBase>> m_tick_system_map;
   std::unordered_map<size_t, std::list<std::shared_ptr<CEventBase>>> m_subscribed_event_map;
 };
 
@@ -75,14 +70,12 @@ CWorldBase::CWorldBase()
 {
   m_systems_map.clear();
   m_entities_map.clear();
-  m_tick_system_map.clear();
 }
 
 CWorldBase::~CWorldBase()
 {
   m_systems_map.clear();
   m_entities_map.clear();
-  m_tick_system_map.clear();
 }
 
 template <typename T>
@@ -114,12 +107,6 @@ bool CWorldBase::unregister_system()
   }
 
   m_systems_map.erase(iter);
-
-  auto tick_iter = m_tick_system_map.find(hash);
-  if (tick_iter != m_tick_system_map.end())
-  {
-    m_tick_system_map.erase(tick_iter);
-  }
   system->unconfigure();
   return true;
 }
@@ -173,60 +160,10 @@ std::shared_ptr<T> CWorldBase::get_system()
   return std::dynamic_pointer_cast<T>(iter->second);
 }
 
-template <typename T>
-bool CWorldBase::enable_system_frame_tick()
-{
-  // get system from map
-  auto system_ptr = get_system<T>();
-  if (!system_ptr)
-  {
-    return false;
-  }
-
-  // already join to tick map
-  // return true
-  size_t hash = typeid(T).hash_code();
-  auto iter = m_tick_system_map.find(hash);
-  if (iter != m_tick_system_map.end())
-  {
-    return true;
-  }
-
-  m_tick_system_map[hash] = std::dynamic_pointer_cast<CSystemBase>(system_ptr);
-  return true;
-}
-
-template <typename T>
-bool CWorldBase::disable_system_frame_tick()
-{
-  size_t hash = typeid(T).hash_code();
-  auto iter = m_tick_system_map.find(hash);
-
-  if (iter == m_tick_system_map.end())
-  {
-    return false;
-  }
-
-  m_tick_system_map.erase(iter);
-  return true;
-}
-
 void CWorldBase::frame_tick()
 {
-  for (auto &item : m_tick_system_map)
-  {
-    if (!item.second)
-    {
-      continue;
-    }
-
-    if (!item.second->is_enabled())
-    {
-      continue;
-    }
-
-    item.second->frame_tick();
-  }
+  CTickEvent event;
+  emit<CTickEvent>(event);
 }
 
 template <typename SystemType, typename... EventTypes>
@@ -342,7 +279,7 @@ bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
 }
 
 template <typename EventType>
-void CWorldBase::emit(EventType event)
+void CWorldBase::emit(EventType &event)
 {
   // find system which subscribed this event
   size_t event_hash = typeid(EventType).hash_code();

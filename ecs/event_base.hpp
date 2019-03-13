@@ -11,7 +11,11 @@ namespace simple_server
 namespace ecs
 {
 
-class CEventBase : boost::noncopyable
+class CEventBase : public boost::noncopyable
+{
+};
+
+class CTickEvent: public CEventBase
 {
 };
 
