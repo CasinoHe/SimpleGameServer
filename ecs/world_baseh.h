@@ -7,7 +7,12 @@
 #include "ecs/system_base.h"
 #include "ecs/entity_base.h"
 
+#ifdef ECS_USE_LOG
+#include "log/log.h"
+#endif
+
 #include <memory>
+#include <iostream>
 #include <list>
 
 #include <boost/noncopyable.hpp>
@@ -52,8 +57,8 @@ public:
   bool unsubscribe(std::shared_ptr<CSystemBase> system_ptr);
 
   // emit event
-  template<typename EventType, typename... EventArgs>
-  void emit(EventType event, EventArgs ...args);
+  template <typename EventType>
+  void emit(EventType event);
 
 protected:
   template <typename T>
@@ -208,19 +213,19 @@ bool CWorldBase::disable_system_frame_tick()
 
 void CWorldBase::frame_tick()
 {
-  for (std::pair<const size_t, std::shared_ptr<CSystemBase>> iter : m_tick_system_map)
+  for (auto &item : m_tick_system_map)
   {
-    if (!iter->second)
+    if (!item.second)
     {
       continue;
     }
 
-    if (!iter->second->is_enabled())
+    if (!item.second->is_enabled())
     {
       continue;
     }
 
-    iter->second->frame_tick();
+    item.second->frame_tick();
   }
 }
 
@@ -336,8 +341,8 @@ bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
   }
 }
 
-template <typename EventType, typename... EventArgs>
-void CWorldBase::emit(EventType event, EventArgs ...args)
+template <typename EventType>
+void CWorldBase::emit(EventType event)
 {
   // find system which subscribed this event
   size_t event_hash = typeid(EventType).hash_code();
@@ -348,8 +353,28 @@ void CWorldBase::emit(EventType event, EventArgs ...args)
   }
 
   std::list<std::shared_ptr<CSystemBase>> &system_list = event_iter->second;
-  for (auto system_iter : system_list)
+  for (auto &item: system_list)
   {
+    if (!item->is_enabled())
+    {
+      continue;
+    }
+
+    try
+    {
+      system_iter->on_event<EventType>(shared_from_this(), event);
+    }
+    catch (std::exception &e)
+    {
+#ifdef ECS_USE_LOG
+      LOG_WARNING(g_logger) << "Event Except from " << typeid(EventType).name();
+      LOG_WARNING(g_logger) << "info: " << e.what();
+#else
+      std::cout << "Event Except from " << typeid(EventType).name() << std::endl;
+      std::cout << "info: " << e.what() << std::endl;
+#endif
+      continue;
+    }
   }
 }
 

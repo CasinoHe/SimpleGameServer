@@ -4,9 +4,15 @@
 
 #pragma once
 
+#ifdef ECS_USE_LOG
+#include "log/log.h"
+#endif
+
 #include <boost/noncopyable.hpp>
 
 #include <memory>
+#include <iostream>
+#include <functional>
 
 namespace simple_server
 {
@@ -14,6 +20,7 @@ namespace ecs
 {
 
 class CWorldBase;
+class CEventBase;
 
 class CSystemBase : boost::noncopyable
 {
@@ -28,13 +35,19 @@ public:
   virtual bool unconfigure();
   virtual void frame_tick();
 
-  template <typename EventType, typename... EventArgs>
-  void trigger_event(EventType event, EventArgs ...args);
+  template <typename EventType>
+  void on_event(std::shared_ptr<CWorldBase> world_ptr, EventType &event);
+
+  template <typename EventType>
+  bool register_event_handler(std::function<void (std::shared_ptr<CWorldBase>, CEventBase &)>);
+  template <typename EventType>
+  bool unregister_event_handler();
 
 private:
   bool m_is_enabled;
   bool m_is_configured;
   std::shared_ptr<CWorldBase> m_world_ptr;
+  std::unordered_map<size_t, std::function<void (std::shared_ptr<CWorldBase>, CEventBase &)>> m_event_handler_map;
 };
 
 CSystemBase::CSystemBase()
@@ -78,9 +91,45 @@ void CSystemBase::frame_tick()
   return;
 }
 
-template <typename EventType, typename ...EventArgs>
-void CSystemBase::trigger_event(EventType event, EventArgs ...args)
+template <typename EventType>
+void CSystemBase::on_event(std::shared_ptr<CWorldBase> world_ptr, EventType &event)
 {
+  size_t hash = typeid(EventType).hash_code();
+  auto iter = m_event_handler_map.find(hash);
+  if (iter == m_event_handler_map.end())
+  {
+#ifdef ECS_USE_LOG
+    LOG_WARNING(g_logger) << "System cannot find handler for " << typeid(EventType).name();
+#else
+    std::cout << "System cannot find handler for " << typeid(EventType).name() << std::endl;
+#endif
+    return;
+  }
+
+  auto function = iter->second;
+  function(world_ptr, dynamic_cast<EventBase>(event));
+  return;
+}
+
+template <typename EventType>
+bool CSystemBase::register_event_handler(std::function<void (std::shared_ptr<CWorldBase>, CEventBase &)> function)
+{
+  size_t hash = typeid(EventType).hash_code();
+  auto iter = m_event_handler_map.find(hash);
+  if (iter != m_event_handler_map.end())
+  {
+    return false;
+  }
+
+  m_event_handler_map[hash] = function;
+  return true;
+}
+
+template <typename EventType>
+bool CSystemBase::unregister_event_handler()
+{
+  size_t hash = typeid(EventType).hash_code();
+  return 1 == m_event_handler_map.erase(hash);
 }
 
 } // namespace ecs
