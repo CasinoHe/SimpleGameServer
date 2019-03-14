@@ -15,6 +15,7 @@
 #include <memory>
 #include <iostream>
 #include <list>
+#include <string>
 
 #include <boost/noncopyable.hpp>
 
@@ -51,6 +52,10 @@ public:
   bool unsubscribe();
   template <typename EventType, typename... LeftEventTypes>
   bool unsubscribe(std::shared_ptr<CSystemBase> system_ptr);
+
+  template <typename EntityType>
+  bool create_entity(std::string &entityid);
+  bool destroy_entity(std::string &entityid);
 
   // emit event
   template <typename EventType>
@@ -312,6 +317,58 @@ void CWorldBase::emit(EventType &event)
 #endif
       continue;
     }
+  }
+}
+
+template <typename EntityType>
+bool CWorldBase::create_entity(std::string &entityid)
+{
+  if (!entityid.empty())
+  {
+    auto iter = m_entities_map.find(entityid);
+    if (iter != m_entities_map.end())
+    {
+      // entity exists already
+      return false;
+    }
+  }
+  std::shared_ptr<EntityType> entity_ptr = std::make_shared<EntityType>(entityid);
+  if (!entity_ptr)
+  {
+    return false;
+  }
+
+  std::string &des_entityid = entity_ptr->get_entityid();
+  m_entities_map[des_entityid] = entity_ptr;
+
+  // emit entity create event
+  CEntityCreateEvent event(entity_ptr);
+  emit<CEntityCreateEvent>(event);
+  return true;
+}
+
+bool CWorldBase::destroy_entity(std::string &entityid)
+{
+  if (entityid.empty())
+  {
+    return false;
+  }
+
+  auto iter = m_entities_map.find(entityid);
+  if (iter == m_entities_map.end())
+  {
+    return false;
+  }
+
+  int ret = m_entities_map.erase(entityid);
+  if (ret == 1)
+  {
+    CEntityDestroyEvent event(iter->second);
+    emit<CEntityDestroyEvent>(event);
+    return true;
+  }
+  else {
+    return false;
   }
 }
 
