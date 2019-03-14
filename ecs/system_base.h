@@ -29,8 +29,8 @@ public:
   virtual ~CSystemBase();
 
   inline bool is_enabled() { return m_is_enabled; }
-  inline bool enable() { m_is_enabled = true; }
-  inline bool disable() { m_is_enabled = false; }
+  inline void enable() { m_is_enabled = true; }
+  inline void disable() { m_is_enabled = false; }
   virtual bool configure(std::shared_ptr<CWorldBase> wolrd_ptr);
   virtual bool unconfigure();
   virtual void frame_tick(std::shared_ptr<CWorldBase>, CEventBase &event);
@@ -111,7 +111,7 @@ void CSystemBase::on_event(std::shared_ptr<CWorldBase> world_ptr, EventType &eve
   }
 
   auto function = iter->second;
-  function(world_ptr, dynamic_cast<EventBase>(event));
+  function(world_ptr, dynamic_cast<CEventBase>(event));
   return;
 }
 

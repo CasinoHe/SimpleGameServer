@@ -7,6 +7,7 @@
 #include "ecs/system_base.h"
 #include "ecs/entity_base.h"
 #include "ecs/event_base.hpp"
+#include "ecs/system_base.h"
 
 #ifdef ECS_USE_LOG
 #include "log/log.h"
