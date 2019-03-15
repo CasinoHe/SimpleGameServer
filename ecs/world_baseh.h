@@ -17,6 +17,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <algorithm>
 
 #include <boost/noncopyable.hpp>
 
@@ -56,11 +57,13 @@ public:
 
   template <typename EntityType>
   bool create_entity(std::string &entityid);
+  template <typename EntityType>
+  bool create_entity(const char *entityid);
   bool destroy_entity(std::string &entityid);
 
   // emit event
   template <typename EventType>
-  void emit(EventType &event);
+  void emit(EventType *event);
 
 protected:
   template <typename T>
@@ -69,7 +72,7 @@ protected:
 private:
   std::unordered_map<size_t, std::shared_ptr<CSystemBase>> m_systems_map;
   std::unordered_map<std::string, std::shared_ptr<CEntityBase>> m_entities_map;
-  std::unordered_map<size_t, std::list<std::shared_ptr<CEventBase>>> m_subscribed_event_map;
+  std::unordered_map<size_t, std::list<std::shared_ptr<CSystemBase>>> m_subscribed_event_map;
 };
 
 CWorldBase::CWorldBase()
@@ -112,6 +115,7 @@ bool CWorldBase::unregister_system()
     return false;
   }
 
+  auto system = iter->second;
   m_systems_map.erase(iter);
   system->unconfigure();
   return true;
@@ -169,7 +173,7 @@ std::shared_ptr<T> CWorldBase::get_system()
 void CWorldBase::frame_tick()
 {
   CTickEvent event;
-  emit<CTickEvent>(event);
+  emit<CTickEvent>(&event);
 }
 
 template <typename SystemType, typename... EventTypes>
@@ -179,7 +183,7 @@ bool CWorldBase::subscribe()
   size_t system_hash = typeid(SystemType).hash_code();
   auto system_iter = m_systems_map.find(system_hash);
 
-  if (system_iter == m_system_map.end())
+  if (system_iter == m_systems_map.end())
   {
     return false;
   }
@@ -210,8 +214,8 @@ bool CWorldBase::subscribe(std::shared_ptr<CSystemBase> system_ptr)
   }
   else
   {
-    auto system_iter = event_iter->second->find(system_ptr);
-    if (system_iter == event_iter->second->end())
+    auto system_iter = std::find(event_iter->second.cbegin(), event_iter->second.cend(), system_ptr);
+    if (system_iter == event_iter->second.end())
     {
       m_subscribed_event_map[event_hash].emplace_back(system_ptr);
     }
@@ -262,12 +266,12 @@ bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
   auto iter = m_subscribed_event_map.find(event_hash);
   if (iter != m_subscribed_event_map.end())
   {
-    auto system_iter = iter->second->find(system_ptr);
-    if (system_iter != iter->second->end())
+    auto system_iter = std::find(iter->second.cbegin(), iter->second.cend(), system_ptr);
+    if (system_iter != iter->second.end())
     {
       iter->second.erase(system_iter);
 
-      if (iter->second->size() <= 0)
+      if (iter->second.size() <= 0)
       {
         m_subscribed_event_map.erase(iter);
       }
@@ -285,7 +289,7 @@ bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
 }
 
 template <typename EventType>
-void CWorldBase::emit(EventType &event)
+void CWorldBase::emit(EventType *pevent)
 {
   // find system which subscribed this event
   size_t event_hash = typeid(EventType).hash_code();
@@ -295,8 +299,7 @@ void CWorldBase::emit(EventType &event)
     return;
   }
 
-  std::list<std::shared_ptr<CSystemBase>> &system_list = event_iter->second;
-  for (auto &item: system_list)
+  for (auto &item: event_iter->second)
   {
     if (!item->is_enabled())
     {
@@ -305,7 +308,7 @@ void CWorldBase::emit(EventType &event)
 
     try
     {
-      system_iter->on_event<EventType>(shared_from_this(), event);
+      item->on_event<EventType>(shared_from_this(), pevent);
     }
     catch (std::exception &e)
     {
@@ -339,13 +342,20 @@ bool CWorldBase::create_entity(std::string &entityid)
     return false;
   }
 
-  std::string &des_entityid = entity_ptr->get_entityid();
+  const std::string &des_entityid = entity_ptr->get_entityid();
   m_entities_map[des_entityid] = entity_ptr;
 
   // emit entity create event
   CEntityCreateEvent event(entity_ptr);
-  emit<CEntityCreateEvent>(event);
+  emit<CEntityCreateEvent>(&event);
   return true;
+}
+
+template <typename EntityType>
+bool CWorldBase::create_entity(const char *entityid)
+{
+  std::string entitystr(entityid);
+  return create_entity<EntityType>(entitystr);
 }
 
 bool CWorldBase::destroy_entity(std::string &entityid)
@@ -365,7 +375,7 @@ bool CWorldBase::destroy_entity(std::string &entityid)
   if (ret == 1)
   {
     CEntityDestroyEvent event(iter->second);
-    emit<CEntityDestroyEvent>(event);
+    emit<CEntityDestroyEvent>(&event);
     return true;
   }
   else {

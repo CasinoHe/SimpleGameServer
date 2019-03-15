@@ -22,7 +22,7 @@ void test() {
 void test_ecs() {
   // create a world
   std::shared_ptr<simple_server::ecs::CWorldBase> world = std::make_shared<simple_server::ecs::CWorldBase>();
-  world->create_entity<simple_server::ecs::CEntityBase>(std::string(""));
+  world->create_entity<simple_server::ecs::CEntityBase>("");
 }
 
 namespace simple_server {
