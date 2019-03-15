@@ -45,15 +45,15 @@ public:
   // tick every frame
   void frame_tick();
 
-  // event
-  template <typename SystemType, typename... Types>
+  template <typename SystemType, typename EventType>
   bool subscribe();
-  template <typename EventType, typename... LeftEventTypes>
-  bool subscribe(std::shared_ptr<CSystemBase> system_ptr);
-  template <typename SystemType, typename... Types>
+  template <typename EventType>
+  bool subscribe_one(std::shared_ptr<CSystemBase> &system_ptr);
+
+  template <typename SystemType, typename EventType>
   bool unsubscribe();
-  template <typename EventType, typename... LeftEventTypes>
-  bool unsubscribe(std::shared_ptr<CSystemBase> system_ptr);
+  template <typename EventType>
+  bool unsubscribe_one(std::shared_ptr<CSystemBase> &system_ptr);
 
   template <typename EntityType>
   bool create_entity(std::string &entityid);
@@ -176,7 +176,7 @@ void CWorldBase::frame_tick()
   emit<CTickEvent>(event);
 }
 
-template <typename SystemType, typename... EventTypes>
+template <typename SystemType, typename EventType>
 bool CWorldBase::subscribe()
 {
   // find system first
@@ -188,17 +188,12 @@ bool CWorldBase::subscribe()
     return false;
   }
 
-  if (sizeof...(EventTypes) <= 0)
-  {
-    return false;
-  }
-
-  subscribe<EventTypes...>(system_iter->second);
+  subscribe_one<EventType>(system_iter->second);
   return true;
 }
 
-template <typename EventType, typename... LeftEventTypes>
-bool CWorldBase::subscribe(std::shared_ptr<CSystemBase> system_ptr)
+template <typename EventType>
+bool CWorldBase::subscribe_one(std::shared_ptr<CSystemBase> &system_ptr)
 {
   if (!system_ptr)
   {
@@ -220,20 +215,10 @@ bool CWorldBase::subscribe(std::shared_ptr<CSystemBase> system_ptr)
       m_subscribed_event_map[event_hash].emplace_back(system_ptr);
     }
   }
-
-  // compared system pointer
-
-  if (sizeof...(LeftEventTypes) <= 0)
-  {
-    return true;
-  }
-  else
-  {
-    return subscribe<LeftEventTypes...>(system_ptr);
-  }
+  return true;
 }
 
-template <typename SystemType, typename... EventTypes>
+template <typename SystemType, typename EventType>
 bool CWorldBase::unsubscribe()
 {
   // find system_ptr
@@ -244,18 +229,13 @@ bool CWorldBase::unsubscribe()
     return false;
   }
 
-  if (sizeof...(EventTypes) <= 0)
-  {
-    return false;
-  }
-
   auto system_ptr = iter->second;
-  unsubscribe<EventTypes...>(system_ptr);
+  unsubscribe_one<EventType>(system_ptr);
   return true;
 }
 
-template <typename EventType, typename... LeftEventTypes>
-bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
+template <typename EventType>
+bool CWorldBase::unsubscribe_one(std::shared_ptr<CSystemBase> &system_ptr)
 {
   if (!system_ptr)
   {
@@ -277,15 +257,7 @@ bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
       }
     }
   }
-
-  if (sizeof...(LeftEventTypes) <= 0)
-  {
-    return true;
-  }
-  else
-  {
-    return unsubscribe<LeftEventTypes...>(system_ptr);
-  }
+  return true;
 }
 
 template <typename EventType>
