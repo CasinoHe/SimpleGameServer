@@ -63,7 +63,7 @@ public:
 
   // emit event
   template <typename EventType>
-  void emit(EventType *event);
+  void emit(EventType &event);
 
 protected:
   template <typename T>
@@ -173,7 +173,7 @@ std::shared_ptr<T> CWorldBase::get_system()
 void CWorldBase::frame_tick()
 {
   CTickEvent event;
-  emit<CTickEvent>(&event);
+  emit<CTickEvent>(event);
 }
 
 template <typename SystemType, typename... EventTypes>
@@ -289,7 +289,7 @@ bool CWorldBase::unsubscribe(std::shared_ptr<CSystemBase> system_ptr)
 }
 
 template <typename EventType>
-void CWorldBase::emit(EventType *pevent)
+void CWorldBase::emit(EventType &pevent)
 {
   // find system which subscribed this event
   size_t event_hash = typeid(EventType).hash_code();
@@ -347,7 +347,7 @@ bool CWorldBase::create_entity(std::string &entityid)
 
   // emit entity create event
   CEntityCreateEvent event(entity_ptr);
-  emit<CEntityCreateEvent>(&event);
+  emit<CEntityCreateEvent>(event);
   return true;
 }
 
@@ -375,7 +375,7 @@ bool CWorldBase::destroy_entity(std::string &entityid)
   if (ret == 1)
   {
     CEntityDestroyEvent event(iter->second);
-    emit<CEntityDestroyEvent>(&event);
+    emit<CEntityDestroyEvent>(event);
     return true;
   }
   else {
