@@ -22,7 +22,7 @@ namespace ecs
 
 class CWorldBase;
 
-class CSystemBase : boost::noncopyable
+class CSystemBase : public boost::noncopyable
 {
 public:
   CSystemBase();

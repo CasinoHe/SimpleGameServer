@@ -26,7 +26,7 @@ namespace simple_server
 namespace ecs
 {
 
-class CWorldBase : boost::noncopyable, std::enable_shared_from_this<CWorldBase>
+class CWorldBase : public boost::noncopyable, public std::enable_shared_from_this<CWorldBase>
 {
 public:
   CWorldBase();
