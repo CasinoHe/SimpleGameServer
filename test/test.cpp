@@ -56,6 +56,8 @@ void test_ecs() {
   world->register_system<CTestSystem>();
   world->enable_system<CTestSystem>();
   world->subscribe<CTestSystem, simple_server::ecs::CEntityCreateEvent>(); // , simple_server::ecs::CEntityCreateEvent>();
+  std::shared_ptr<simple_server::ecs::CEntityBase> entity_ptr = world->create_entity<simple_server::ecs::CEntityBase>("");
+  world->unsubscribe<CTestSystem, simple_server::ecs::CEntityCreateEvent>();
   world->create_entity<simple_server::ecs::CEntityBase>("");
 }
 
