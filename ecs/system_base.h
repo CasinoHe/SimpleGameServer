@@ -25,6 +25,8 @@ class CWorldBase;
 class CSystemBase : public boost::noncopyable
 {
 public:
+  typedef std::shared_ptr<CSystemBase> system_ptr_type;
+
   CSystemBase();
   virtual ~CSystemBase();
 

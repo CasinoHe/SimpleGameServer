@@ -29,7 +29,7 @@ namespace ecs
 class CWorldBase : public boost::noncopyable, public std::enable_shared_from_this<CWorldBase>
 {
 public:
-  typedef std::pair<size_t, std::shared_ptr<CSystemBase>> EVENT_SYSTEM_PAIR;
+  typedef std::shared_ptr<CWorldBase> world_ptr;
 
   CWorldBase();
   virtual ~CWorldBase();
@@ -49,13 +49,12 @@ public:
 
   template <typename SystemType, typename EventType>
   bool subscribe();
-  template <typename SystemType, typename EventType>
-  bool subscribe_one(std::shared_ptr<CSystemBase> &system_ptr);
+  template <typename EventType>
+  bool subscribe_one(CSystemBase::system_ptr_type &system_ptr);
 
   template <typename SystemType, typename EventType>
   bool unsubscribe();
-  template <typename SystemType>
-  bool unsubscribe_one(std::list<std::shared_ptr<CSystemBase>> &system_list_ptr);
+  bool unsubscribe_one(std::list<CSystemBase::system_ptr_type> &system_list_ptr, CSystemBase::system_ptr_type system_ptr);
 
   template <typename EntityType>
   std::shared_ptr<EntityType> create_entity(std::string &entityid);
@@ -74,7 +73,7 @@ protected:
 private:
   std::unordered_map<size_t, std::shared_ptr<CSystemBase>> m_systems_map;
   std::unordered_map<std::string, std::shared_ptr<CEntityBase>> m_entities_map;
-  std::unordered_map<size_t, std::list<EVENT_SYSTEM_PAIR>> m_subscribed_event_map;
+  std::unordered_map<size_t, std::list<CSystemBase::system_ptr_type>> m_subscribed_event_map;
 };
 
 CWorldBase::CWorldBase()
@@ -182,20 +181,18 @@ template <typename SystemType, typename EventType>
 bool CWorldBase::subscribe()
 {
   // find system first
-  size_t system_hash = typeid(SystemType).hash_code();
-  auto system_iter = m_systems_map.find(system_hash);
-
-  if (system_iter == m_systems_map.end())
+  CSystemBase::system_ptr_type system_ptr = get_system<SystemType>();
+  if (!system_ptr)
   {
     return false;
   }
 
-  subscribe_one<SystemType, EventType>(system_iter->second);
+  subscribe_one<EventType>(system_ptr);
   return true;
 }
 
-template <typename SystemType, typename EventType>
-bool CWorldBase::subscribe_one(std::shared_ptr<CSystemBase> &system_ptr)
+template <typename EventType>
+bool CWorldBase::subscribe_one(CSystemBase::system_ptr_type &system_ptr)
 {
   if (!system_ptr)
   {
@@ -203,23 +200,22 @@ bool CWorldBase::subscribe_one(std::shared_ptr<CSystemBase> &system_ptr)
   }
 
   size_t event_hash = typeid(EventType).hash_code();
-  size_t system_hash = typeid(SystemType).hash_code();
   auto event_iter = m_subscribed_event_map.find(event_hash);
 
   if (event_iter == m_subscribed_event_map.end())
   {
-    m_subscribed_event_map[event_hash] = std::list<EVENT_SYSTEM_PAIR>();
-    EVENT_SYSTEM_PAIR system_pair({system_hash, system_ptr});
-    m_subscribed_event_map[event_hash].emplace_back(system_pair);
+    m_subscribed_event_map[event_hash] = std::list<CSystemBase::system_ptr_type>();
+    m_subscribed_event_map[event_hash].emplace_back(system_ptr);
     return true;
   }
   else
   {
-    auto system_iter = std::find(event_iter->second.cbegin(), event_iter->second.cend(), system_ptr);
-    if (system_iter == event_iter->second.end())
+    auto &system_ptr_list = m_subscribed_event_map[event_hash];
+    auto system_iter = std::find(system_ptr_list.cbegin(), system_ptr_list.cend(), system_ptr);
+
+    if (system_iter == system_ptr_list.cend())
     {
-      EVENT_SYSTEM_PAIR system_pair({system_hash, system_ptr});
-      m_subscribed_event_map[event_hash].emplace_back(system_pair);
+      m_subscribed_event_map[event_hash].emplace_back(system_ptr);
       return true;
     }
   }
@@ -232,7 +228,6 @@ bool CWorldBase::subscribe_one(std::shared_ptr<CSystemBase> &system_ptr)
 template <typename SystemType, typename EventType>
 bool CWorldBase::unsubscribe()
 {
-  // find system_ptr
   size_t event_hash = typeid(EventType).hash_code();
   auto iter = m_subscribed_event_map.find(event_hash);
   if (iter == m_subscribed_event_map.end())
@@ -241,35 +236,35 @@ bool CWorldBase::unsubscribe()
   }
 
   auto &system_list_ptr = iter->second;
-  return unsubscribe_one<SystemType>(system_list_ptr);
+
+  // find system_ptr
+  auto system_ptr = get_system<SystemType>();
+  if (!system_ptr)
+  {
+    return false;
+  }
+
+  return unsubscribe_one(system_list_ptr, system_ptr);
 }
 
-template <typename SystemType>
-bool CWorldBase::unsubscribe_one(std::list<std::shared_ptr<CSystemBase>> &system_list_ptr)
+bool unsubscribe_one(std::list<CSystemBase::system_ptr_type> &system_list_ptr, CSystemBase::system_ptr_type system_ptr)
 {
   if (system_list_ptr.empty())
   {
     return false;
   }
 
-  size_t system_hash = typeid(SystemType).hash_code();
-  auto found_iter = system_list_ptr.cend();
+  // delete ptr from ptr list
   for (auto iter = system_list_ptr.cbegin(); iter != system_list_ptr.end(); iter++)
   {
-    if (iter.first == system_hash)
+    if (*iter == system_ptr)
     {
-      found_iter = iter;
-      break;
+      iter = system_list_ptr.erase(iter);
+      return true;
     }
   }
 
-  if (found_iter == system_list_ptr.end())
-  {
-    return false;
-  }
-
-  system_list_ptr.erase(found_iter);
-  return true;
+  return false;
 }
 
 template <typename EventType>
@@ -283,9 +278,8 @@ void CWorldBase::emit(EventType &pevent)
     return;
   }
 
-  for (auto &pair: event_iter->second)
+  for (auto &item: event_iter->second)
   {
-    auto &item = pair->second;
     if (!item->is_enabled())
     {
       continue;
