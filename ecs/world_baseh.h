@@ -247,7 +247,7 @@ bool CWorldBase::unsubscribe()
   return unsubscribe_one(system_list_ptr, system_ptr);
 }
 
-bool unsubscribe_one(std::list<CSystemBase::system_ptr_type> &system_list_ptr, CSystemBase::system_ptr_type system_ptr)
+bool CWorldBase::unsubscribe_one(std::list<CSystemBase::system_ptr_type> &system_list_ptr, CSystemBase::system_ptr_type system_ptr)
 {
   if (system_list_ptr.empty())
   {
