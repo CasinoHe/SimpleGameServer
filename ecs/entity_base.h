@@ -54,7 +54,7 @@ public:
   bool join_world(std::shared_ptr<CWorldBase> world_ptr);
   bool detach_from_world();
 
-  virtual bool before_destroy();
+  virtual bool before_destruct();
 
 private:
   std::unordered_map<size_t, std::shared_ptr<void>> m_components_map;

@@ -359,7 +359,7 @@ bool CWorldBase::destroy_entity(const std::string &entityid)
   try
   {
     // call before destroy
-    iter->second->before_destroy();
+    iter->second->before_destruct();
   }
   catch (std::exception &e)
   {

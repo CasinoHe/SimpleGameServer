@@ -57,7 +57,7 @@ bool CEntityBase::detach_from_world()
   return true;
 }
 
-bool CEntityBase::before_destroy()
+bool CEntityBase::before_destruct()
 {
   // release all component
   m_components_map.clear();
