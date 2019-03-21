@@ -8,6 +8,8 @@
 
 #include <memory>
 #include <functional>
+#include <thread>
+#include <chrono>
 
 // TODO
 // list all test code entry to a container
@@ -58,9 +60,22 @@ void test_ecs() {
   world->subscribe<CTestSystem, simple_server::ecs::CEntityCreateEvent>(); // , simple_server::ecs::CEntityCreateEvent>();
   std::shared_ptr<simple_server::ecs::CEntityBase> entity_ptr = world->create_entity<simple_server::ecs::CEntityBase>("");
   world->unsubscribe<CTestSystem, simple_server::ecs::CEntityCreateEvent>();
-  world->create_entity<simple_server::ecs::CEntityBase>("");
+  auto entity_ptr2 = world->create_entity<simple_server::ecs::CEntityBase>("");
   world->subscribe<CTestSystem, simple_server::ecs::CEntityCreateEvent>(); // , simple_server::ecs::CEntityCreateEvent>();
-  world->create_entity<simple_server::ecs::CEntityBase>("");
+  auto entity_ptr3 = world->create_entity<simple_server::ecs::CEntityBase>("");
+
+  world->destroy_entity(entity_ptr->get_entityid());
+  world->destroy_entity(entity_ptr2->get_entityid());
+  world->destroy_entity(entity_ptr3->get_entityid());
+
+  std::this_thread::sleep_for(std::chrono::seconds(10));
+  for (int i = 1; i < 1000; i++)
+  {
+    auto entity = world->create_entity<simple_server::ecs::CEntityBase>("");
+    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    world->destroy_entity(entity->get_entityid());
+  }
+  std::this_thread::sleep_for(std::chrono::seconds(100));
 }
 
 namespace simple_server {

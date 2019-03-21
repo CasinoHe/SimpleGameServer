@@ -17,6 +17,7 @@ namespace ecs
 {
 
 class CEntityBase;
+class CWorldBase;
 
 template <typename T>
 class CComponentWrapper : public boost::noncopyable
@@ -49,9 +50,16 @@ public:
   template <typename T>
   std::shared_ptr<T> get_component();
 
+  // join world or detach from world
+  bool join_world(std::shared_ptr<CWorldBase> world_ptr);
+  bool detach_from_world();
+
+  virtual bool before_destroy();
+
 private:
   std::unordered_map<size_t, std::shared_ptr<void>> m_components_map;
   std::string m_entityid_str;
+  std::shared_ptr<CWorldBase> m_world_ptr;
 };
 
 // function definition

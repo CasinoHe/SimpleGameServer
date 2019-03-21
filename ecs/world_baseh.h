@@ -60,7 +60,7 @@ public:
   std::shared_ptr<EntityType> create_entity(std::string &entityid);
   template <typename EntityType>
   std::shared_ptr<EntityType> create_entity(const char *entityid);
-  bool destroy_entity(std::string &entityid);
+  bool destroy_entity(const std::string &entityid);
 
   // emit event
   template <typename EventType>
@@ -321,6 +321,12 @@ std::shared_ptr<EntityType> CWorldBase::create_entity(std::string &entityid)
     return nullptr;
   }
 
+  // join world
+  if (!entity_ptr->join_world(shared_from_this()))
+  {
+    return nullptr;
+  }
+
   const std::string &des_entityid = entity_ptr->get_entityid();
   m_entities_map[des_entityid] = entity_ptr;
 
@@ -337,7 +343,7 @@ std::shared_ptr<EntityType> CWorldBase::create_entity(const char *entityid)
   return create_entity<EntityType>(entitystr);
 }
 
-bool CWorldBase::destroy_entity(std::string &entityid)
+bool CWorldBase::destroy_entity(const std::string &entityid)
 {
   if (entityid.empty())
   {
@@ -348,6 +354,22 @@ bool CWorldBase::destroy_entity(std::string &entityid)
   if (iter == m_entities_map.end())
   {
     return false;
+  }
+
+  try
+  {
+    // call before destroy
+    iter->second->before_destroy();
+  }
+  catch (std::exception &e)
+  {
+#ifdef ECS_USE_LOG
+    LOG_WARNING(g_logger) << "destroy entity Except from " << entityid;
+    LOG_WARNING(g_logger) << "info: " << e.what();
+#else
+    std::cout << "Event Except from " << entityid;
+    std::cout << "info: " << e.what() << std::endl;
+#endif
   }
 
   int ret = m_entities_map.erase(entityid);

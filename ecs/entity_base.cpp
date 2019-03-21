@@ -25,10 +25,47 @@ CEntityBase::CEntityBase(const std::string &entityid)
   {
     m_entityid_str = entityid;
   }
+
+  m_world_ptr = nullptr;
 }
 
 CEntityBase::~CEntityBase()
 {
+}
+
+bool CEntityBase::join_world(std::shared_ptr<CWorldBase> world_ptr)
+{
+  if (m_world_ptr)
+  {
+    return false;
+  }
+  else
+  {
+    m_world_ptr = world_ptr;
+    return true;
+  }
+}
+
+bool CEntityBase::detach_from_world()
+{
+  if (!m_world_ptr)
+  {
+    return false;
+  }
+
+  m_world_ptr = nullptr;
+  return true;
+}
+
+bool CEntityBase::before_destroy()
+{
+  // release all component
+  m_components_map.clear();
+
+  // release world ptr
+  detach_from_world();
+
+  return true;
 }
 
 } // namespace ecs
